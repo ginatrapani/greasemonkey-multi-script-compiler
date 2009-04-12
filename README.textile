@@ -1,7 +1,6 @@
 h1. Greasemonkey Multi-Script Compiler
 
-by "Gina Trapani":http://ginatrapani.org
-Based heavily Anthony Lieuallen's (single) "script compiler":http://arantius.com/misc/greasemonkey/script-compiler 
+by "Gina Trapani":http://ginatrapani.org, based heavily Anthony Lieuallen's (single) "script compiler":http://arantius.com/misc/greasemonkey/script-compiler 
 
 h2. Warning
 
@@ -13,16 +12,16 @@ h2. System Requirements
 * PHP
 * "Smarty":http://smarty.net
 
-h2. Quick User Guide
+h2. Quick Start User Guide
 
-Things have to be set up exactly right for the compiler to succeed.  Good luck. (More detailed documentation is to come.)
+Things have to be set up exactly right for the compiler to succeed. Error messages are probably not as descriptive as they should be. Back up your work before you run it. Good luck.(More detailed documentation is to come.)
 
 h3. Configure Your User Scripts
 
 * In the project's @_input@ directory, create a folder named after your extension without spaces, all lowercase, ie:
 <pre>$ mkdir mygreatextension</pre>
 
-* Copy the @config.inc.php@ file into your new directory. In it, fill in your extension's name, description, GUID, and all other required bits of information.  For example:
+* Copy the @config.inc.php@ file into your new directory. In it, fill in your extension's name, description, GUID, homepage, Firefox's min and max version compatibility, update URL, and all other required bits of information.  For example:
 
 <pre>'name'=>"Better Gmail 2",
 
@@ -45,7 +44,7 @@ h3. Configure Your User Scripts
 
 * Make a @user_scripts@ subdirectory, and copy all the user scripts you want to include in your extension  into it.
 
-* For each user script, add an @author, @homepage, @enabledbydefault, @tab parameters, all of which will show up in your extension's options dialog.
+* For each user script, add @@author@, @@homepage@, @@enabledbydefault@, @@tab@ parameters, all of which will show up in your extension's options dialog. 
 
 
 h3. Run the Compiler
