@@ -1,0 +1,45 @@
+TODO:
+
+CHANGELOG 0.7.3.2
+- fixed Add Row Highlights
+- fixed Hide Chat
+- fixed Hide Invites
+
+CHANGELOG 0.7.3.1
+- fixed Folders4Gmail
+- fixed Hide Spam Count
+- fixed Show Message Details
+- removed always secure connection
+
+
+CHANGELOG: 0.7.1 
+*  Remove GmailAgenda (Labs gadget, doesn’t work), update readers to experimental extension: https://addons.mozilla.org/en-US/firefox/addon/9433* BCC keyboard shortcut interferes with Organize Bookmarks--changed to Ctrl+Shift+V* Include Balazs Reader/Cal integration* Include always edit subject http://lifehacker.com/5060791/always-show-the-subject-line-when-composing-a-gmail-reply
+* CC keyboard shortcut reportedley no longer works
+* Update Redesigned skin
+
+
+CHANGELOG: 0.6
+
+Add Air Skin:
+http://userstyles.org/styles/1833
+
+Re-add Force Encrypted (for Apps accounts)
+
+Check Filter Assistant (not always working)
+
+Update ModifiedMacros
+
+
+
+CHANGELOG: 0.5.3.2
+
+Change drylight's name to Diego Barros
+
+Updated Redesigned Skin
+
+Updated Filter Assistant
+
+Removed force https 
+
+Removed HTML signatures (now it's own standalone extension)
+

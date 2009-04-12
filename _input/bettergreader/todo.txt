@@ -1,0 +1,4 @@
+TODO:
+
+Add--yes, with permission, not a default script http://userscripts.org/scripts/show/6415
+

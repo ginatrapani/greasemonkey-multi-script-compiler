@@ -1,0 +1,12 @@
+TODO
+
+
+*Make Shorten Product Links work with co.uk site
+
+*Make Shorten Product Links use shorter associate URL format:
+http://lifehacker.com/397946/better-amazon-firefox-extension-upgrades-amazoncom#c6542238
+
+*Add always use https connection?
+
+* Add comment box expander?
+http://userscripts.org/scripts/show/4110

@@ -1,0 +1,80 @@
+h1. Greasemonkey Multi-Script Compiler
+by Gina Trapani (http://ginatrapani.org)
+Based heavily on code from Anthony Lieuallen located at:
+http://arantius.com/misc/greasemonkey/script-compiler 
+
+h2. Warning
+This alpha code is a delicate flower that hasn't been tested nearly as thoroughly as it needs to be. There isn't much documentation, either. Use at your own risk.
+
+h2. System Requirements
+
+* Bash
+* PHP
+* Smarty:http://smarty.net
+
+
+h2. Quick User Guide
+
+Things have to be set up exactly right for the compiler to succeed.  Good luck. (More detailed documentation is to come.)
+
+h3. Configure Your User Scripts
+
+* In the project's _input directory, create a folder named after your extension without spaces, all lowercase, ie:
+<pre>$ mkdir mygreatextension</pre>
+
+* Copy the <pre>config.inc.php</pre> file into your new directory. In it, fill in your extension's name, description, GUID, and all other required bits of information.  For example:
+
+<pre>'name'=>"Better Gmail 2",
+
+'description'=>"Enhances Gmail with a compilation of useful features written by Greasemonkey user script developers. All scripts copyright their original authors. Click on the script homepage in the Help tab for more information.",
+
+'creator'=>"Gina Trapani  (All user scripts copyright their original authors)",
+
+'guid'=>'123456789',
+
+'homepage'=>"http://ginatrapani.org/workshop/firefox/bettergmail2/",
+
+'minVersion'=>'1.5',
+
+'maxVersion'=>'3.1b3',
+
+'updateURL'=>'https://secure.ginatrapani.org/workshop/firefox/update.rdf',
+
+'helpMsg'=>'Refresh Gmail to apply your changes.',
+</pre>
+
+* Make a <pre>user_scripts</pre> subdirectory, and copy all the user scripts you want to include in your extension  into it.
+
+* For each user script, add an @author, @homepage, @enabledbydefault, @tab parameters, all of which will show up in your extension's options dialog.
+
+
+h3. Run the Compiler
+
+To run the compiler, make the <pre>compile.sh</pre> file executable, and call it, ie:
+
+<pre>$ chmod +x compile.sh
+$ ./compile.sh bettergmail2 0.8 dist</pre>
+
+Here's more on the command usage:
+
+<pre>Usage: compile.sh extension_short_name version_number [package_mode]
+Example: 
+  compile.sh bettergmail2 1.8 dist
+Short name:
+  Extension "short name" is also the name of the folder where its files live, 
+  all lower case, without spaces (ie, bettergmail2)
+Version number:
+  Version number (ie, 1.0 or 2.3)
+Package mode: dist | test | amo
+  dist for installable xpi (most common)
+  test for deflated version for testing
+  amo for installable xpi without an updateURL (for uploading to Mozilla Add-ons)
+</pre>
+
+
+
+
+
+
+
+
