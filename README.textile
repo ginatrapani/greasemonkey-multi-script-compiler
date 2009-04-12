@@ -1,8 +1,7 @@
 h1. Greasemonkey Multi-Script Compiler
 
-by Gina Trapani (http://ginatrapani.org)
-Based heavily on code from Anthony Lieuallen located at:
-http://arantius.com/misc/greasemonkey/script-compiler 
+by "Gina Trapani":http://ginatrapani.org
+Based heavily Anthony Lieuallen's (single) "script compiler":http://arantius.com/misc/greasemonkey/script-compiler 
 
 h2. Warning
 
@@ -12,7 +11,7 @@ h2. System Requirements
 
 * Bash
 * PHP
-* Smarty:http://smarty.net
+* "Smarty":http://smarty.net
 
 h2. Quick User Guide
 
@@ -20,7 +19,7 @@ Things have to be set up exactly right for the compiler to succeed.  Good luck. 
 
 h3. Configure Your User Scripts
 
-* In the project's _input directory, create a folder named after your extension without spaces, all lowercase, ie:
+* In the project's @_input@ directory, create a folder named after your extension without spaces, all lowercase, ie:
 <pre>$ mkdir mygreatextension</pre>
 
 * Copy the @config.inc.php@ file into your new directory. In it, fill in your extension's name, description, GUID, and all other required bits of information.  For example:
@@ -44,14 +43,14 @@ h3. Configure Your User Scripts
 'helpMsg'=>'Refresh Gmail to apply your changes.',
 </pre>
 
-* Make a <pre>user_scripts</pre> subdirectory, and copy all the user scripts you want to include in your extension  into it.
+* Make a @user_scripts@ subdirectory, and copy all the user scripts you want to include in your extension  into it.
 
 * For each user script, add an @author, @homepage, @enabledbydefault, @tab parameters, all of which will show up in your extension's options dialog.
 
 
 h3. Run the Compiler
 
-To run the compiler, make the <pre>compile.sh</pre> file executable, and call it, ie:
+To run the compiler, make the @compile.sh@ file executable, and call it, ie:
 
 <pre>$ chmod +x compile.sh
 $ ./compile.sh bettergmail2 0.8 dist</pre>
@@ -71,11 +70,3 @@ Package mode: dist | test | amo
   test for deflated version for testing
   amo for installable xpi without an updateURL (for uploading to Mozilla Add-ons)
 </pre>
-
-
-
-
-
-
-
-
