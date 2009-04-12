@@ -1,6 +1,6 @@
 h1. Greasemonkey Multi-Script Compiler
 
-by "Gina Trapani":http://ginatrapani.org, based heavily Anthony Lieuallen's (single) "script compiler":http://arantius.com/misc/greasemonkey/script-compiler 
+by "Gina Trapani":http://ginatrapani.org, based heavily Anthony Lieuallen's (single) "Greasemonkey script compiler":http://arantius.com/misc/greasemonkey/script-compiler 
 
 h2. Warning
 
