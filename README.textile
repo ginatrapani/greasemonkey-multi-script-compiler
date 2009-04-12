@@ -1,9 +1,11 @@
 h1. Greasemonkey Multi-Script Compiler
+
 by Gina Trapani (http://ginatrapani.org)
 Based heavily on code from Anthony Lieuallen located at:
 http://arantius.com/misc/greasemonkey/script-compiler 
 
 h2. Warning
+
 This alpha code is a delicate flower that hasn't been tested nearly as thoroughly as it needs to be. There isn't much documentation, either. Use at your own risk.
 
 h2. System Requirements
@@ -11,7 +13,6 @@ h2. System Requirements
 * Bash
 * PHP
 * Smarty:http://smarty.net
-
 
 h2. Quick User Guide
 
@@ -22,7 +23,7 @@ h3. Configure Your User Scripts
 * In the project's _input directory, create a folder named after your extension without spaces, all lowercase, ie:
 <pre>$ mkdir mygreatextension</pre>
 
-* Copy the <pre>config.inc.php</pre> file into your new directory. In it, fill in your extension's name, description, GUID, and all other required bits of information.  For example:
+* Copy the @config.inc.php@ file into your new directory. In it, fill in your extension's name, description, GUID, and all other required bits of information.  For example:
 
 <pre>'name'=>"Better Gmail 2",
 
