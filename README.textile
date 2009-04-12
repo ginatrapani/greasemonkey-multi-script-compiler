@@ -10,22 +10,24 @@ h2. System Requirements
 
 * Bash
 * PHP
-* "Smarty":http://smarty.net
+* "Smarty":http://smarty.net (Note: Smarty's libraries must be in PHP's path)
 
 h2. Quick Start User Guide
 
-Things have to be set up exactly right for the compiler to succeed. Error messages are not as descriptive as they should be. Back up your work before you run the compiler. Good luck. (More detailed documentation is to come.)
+Things have to be set up exactly right for the compiler to succeed. Error messages are not as descriptive as they should be. Back up your work before you run the compiler. Good luck. (More detailed documentation is on its way.)
 
 h3. Configure Your User Scripts
 
 Good things come to those who follow the directions.
 
-# In the project's @_input@ directory, create a folder named after your extension without spaces, all lowercase, ie:
+*Step 1.* In the project's @_input@ directory, create a folder named after your extension without spaces, all lowercase, i.e.:
+
 <pre>$ mkdir mygreatextension</pre>
 
-# Copy the @config.inc.php@ file into your new directory. (Grab it from any of the @_input@ subdirectories.) In it, fill in your extension's name, description, GUID, homepage, Firefox's min and max version compatibility, update URL, and help message.  For example:
+*Step 2.* Copy the @config.inc.php@ file into your new directory. (Copy a sample from any of the @_input@ subdirectories into your new directory.) In it, fill in your extension's name, description, GUID, homepage, Firefox's min and max version compatibility, update URL, and help message.  For example:
 
-<pre>'name'=>"Better Gmail 2",
+<pre>
+'name'=>"Better Gmail 2",
 
 'description'=>"Enhances Gmail with a compilation of useful features written by Greasemonkey user script developers. All scripts copyright their original authors. Click on the script homepage in the Help tab for more information.",
 
@@ -44,16 +46,16 @@ Good things come to those who follow the directions.
 'helpMsg'=>'Refresh Gmail to apply your changes.',
 </pre>
 
-# (Optional) Save a 32x32 pixel @icon.png@ file there, which will appear as your extension's icon.
+*Step 3.* (Optional) Save a 32x32 pixel @icon.png@ file in your new directory, which will appear as your extension's icon.
 
-# Make a @user_scripts@ subdirectory, and copy all the user scripts you want to include in your extension  into it.
+*Step 4.* Make a @user_scripts@ subdirectory, and copy all the user scripts you want to include in your extension  into it.
 
-# For each user script, add @@author@, @@homepage@, @@enabledbydefault@, @@tab@ parameters, all of which will show up in your extension's options dialog. For example, each user script should have a header that looks like this:
+*Step 5.* For each user script, add @@author@, @@homepage@, @@enabledbydefault@, @@tab@ parameters, all of which will show up in your extension's options dialog. For example, each user script should have a header that looks like this:
 
 <pre>
 	// ==UserScript==
 	// @name           An Awesome User Script
-	// @description	   This is just awesome.
+	// @description	   This script injects awesomeness into web pages.
 	// @include        http://example.com/awesome/*
 	
 	// @homepage          http://example.com/awesome-user-script-homepage
@@ -68,23 +70,21 @@ If the script conflicts with another script, add an @@conflict@ parameter and se
 
 h3. Run the Compiler
 
-To run the compiler, make the @compile.sh@ file executable, and call it, ie:
+To run the compiler, make @compile.sh@ executable, and run it, i.e.:
 
 <pre>$ chmod +x compile.sh
-$ ./compile.sh bettergmail2 0.8 dist</pre>
+$ ./compile.sh bettergmail2 1.8</pre>
 
 Here's more on the command usage:
 
 <pre>Usage: compile.sh extension_short_name version_number [package_mode]
-Example: 
-  compile.sh bettergmail2 1.8 dist
 Short name:
   Extension "short name" is also the name of the folder where its files live, 
-  all lower case, without spaces (ie, bettergmail2)
+  all lower case, without spaces (i.e., bettergmail2)
 Version number:
-  Version number (ie, 1.0 or 2.3)
+  Version number (i.e., 1.0 or 2.3)
 Package mode: dist | test | amo
-  dist for installable xpi (most common)
+  dist for installable xpi (most common, default if not specified)
   test for deflated version for testing
   amo for installable xpi without an updateURL (for uploading to Mozilla Add-ons)
 </pre>
