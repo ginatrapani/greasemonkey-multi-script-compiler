@@ -1,90 +1,13 @@
-h1. Greasemonkey Multi-Script Compiler
+h1. Greasemonkey Multi-Script Compiler (GMSC)
 
 by "Gina Trapani":http://ginatrapani.org, based heavily Anthony Lieuallen's (single) "Greasemonkey script compiler":http://arantius.com/misc/greasemonkey/script-compiler 
 
-h2. Warning
+h2. What it does
 
-This alpha code is a delicate flower that hasn't been tested nearly as thoroughly as it needs to be. There isn't much documentation, either. Use at your own risk.
+Builds a standalone Firefox extension from Greasemonkey user scripts, with a user interface that lets you turn any script on or off. Supports multiple tabs and exclusive (ie, radio buttons) user styles as well.  GMSC built the "Better Gmail 2":http://ginatrapani.org/workshop/firefox/bettergmail2 Firefox extension among "others":https://addons.mozilla.org/en-US/firefox/user/60582.
 
-h2. System Requirements
+h2. "Downloads":http://github.com/ginatrapani/greasemonkey-multi-script-compiler/downloads
 
-* Bash
-* PHP
-* "Smarty":http://smarty.net (Note: Smarty's libraries must be in PHP's path)
+h2. [[User Guide]]
 
-h2. Quick Start User Guide
-
-Things have to be set up exactly right for the compiler to succeed. Error messages are not as descriptive as they should be. Back up your work before you run the compiler. Good luck. (More detailed documentation is on its way.)
-
-h3. Configure Your User Scripts
-
-Good things come to those who follow the directions.
-
-*Step 1.* In the project's @_input@ directory, create a folder named after your extension without spaces, all lowercase, i.e.:
-
-<pre>$ mkdir mygreatextension</pre>
-
-*Step 2.* Copy the @config.inc.php@ file into your new directory. (Copy a sample from any of the @_input@ subdirectories into your new directory.) In it, fill in your extension's name, description, GUID, homepage, Firefox's min and max version compatibility, update URL, and help message.  For example:
-
-<pre>
-'name'=>"Better Gmail 2",
-
-'description'=>"Enhances Gmail with a compilation of useful features written by Greasemonkey user script developers. All scripts copyright their original authors. Click on the script homepage in the Help tab for more information.",
-
-'creator'=>"Gina Trapani  (All user scripts copyright their original authors)",
-
-'guid'=>'123456789',
-
-'homepage'=>"http://ginatrapani.org/workshop/firefox/bettergmail2/",
-
-'minVersion'=>'1.5',
-
-'maxVersion'=>'3.1b3',
-
-'updateURL'=>'https://secure.ginatrapani.org/workshop/firefox/update.rdf',
-
-'helpMsg'=>'Refresh Gmail to apply your changes.',
-</pre>
-
-*Step 3.* (Optional) Save a 32x32 pixel @icon.png@ file in your new directory, which will appear as your extension's icon.
-
-*Step 4.* Make a @user_scripts@ subdirectory, and copy all the user scripts you want to include in your extension  into it.
-
-*Step 5.* For each user script, add @@author@, @@homepage@, @@enabledbydefault@, @@tab@ parameters, all of which will show up in your extension's options dialog. For example, each user script should have a header that looks like this:
-
-<pre>
-	// ==UserScript==
-	// @name           An Awesome User Script
-	// @description	   This script injects awesomeness into web pages.
-	// @include        http://example.com/awesome/*
-	
-	// @homepage          http://example.com/awesome-user-script-homepage
-	// @author            Jill Smith, Jack Jones
-	// @tab               General
-	// @enabledbydefault  true
-	// ==/UserScript==
-</pre>
-
-If the script conflicts with another script, add an @@conflict@ parameter and set it to the other script's short name.  (If the other script is called @conflictinducer.user.js@, then the line should be @@conflict conflictinducer@.)
-
-
-h3. Run the Compiler
-
-To run the compiler, make @compile.sh@ executable, and run it, i.e.:
-
-<pre>$ chmod +x compile.sh
-$ ./compile.sh bettergmail2 1.8</pre>
-
-Here's more on the command usage:
-
-<pre>Usage: compile.sh extension_short_name version_number [package_mode]
-Short name:
-  Extension "short name" is also the name of the folder where its files live, 
-  all lower case, without spaces (i.e., bettergmail2)
-Version number:
-  Version number (i.e., 1.0 or 2.3)
-Package mode: dist | test | amo
-  dist for installable xpi (most common, default if not specified)
-  test for deflated version for testing
-  amo for installable xpi without an updateURL (for uploading to Mozilla Add-ons)
-</pre>
+h2. "Mailing List":http://groups.google.com/group/better-gmail-2-firefox-extension
