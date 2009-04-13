@@ -6,8 +6,12 @@ h2. What it does
 
 Builds a standalone Firefox extension from Greasemonkey user scripts, with a user interface that lets you turn any script on or off. Supports multiple tabs and exclusive (ie, radio buttons) user styles as well.  GMSC built the "Better Gmail 2":http://ginatrapani.org/workshop/firefox/bettergmail2 Firefox extension among "others":https://addons.mozilla.org/en-US/firefox/user/60582.
 
-h2. "Downloads":http://github.com/ginatrapani/greasemonkey-multi-script-compiler/downloads
+Better Gmail 2's GMSC-generated options dialog:
 
-h2. "User Guide":http://wiki.github.com/ginatrapani/greasemonkey-multi-script-compiler/user-guide
+!http://cache.gawker.com/assets/images/lifehacker/2008/12/betttergmail2072.png!
 
-h2. "Mailing List":http://groups.google.com/group/better-gmail-2-firefox-extension
+h2. Quick Links
+
+* "Downloads":http://github.com/ginatrapani/greasemonkey-multi-script-compiler/downloads
+* "User Guide":http://wiki.github.com/ginatrapani/greasemonkey-multi-script-compiler/user-guide
+* "Mailing List":http://groups.google.com/group/better-gmail-2-firefox-extension
