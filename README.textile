@@ -8,6 +8,6 @@ Builds a standalone Firefox extension from Greasemonkey user scripts, with a use
 
 h2. "Downloads":http://github.com/ginatrapani/greasemonkey-multi-script-compiler/downloads
 
-h2. [[User Guide]]
+h2. "User Guide":http://wiki.github.com/ginatrapani/greasemonkey-multi-script-compiler/user-guide
 
 h2. "Mailing List":http://groups.google.com/group/better-gmail-2-firefox-extension
