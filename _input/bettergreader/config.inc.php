@@ -14,7 +14,7 @@ $GMSC =  array(
 
 'minVersion'=>'1.5',
 
-'maxVersion'=>'3.1b2',
+'maxVersion'=>'3.1b3',
 
 'updateURL'=>'https://secure.ginatrapani.org/workshop/firefox/update.rdf',
 

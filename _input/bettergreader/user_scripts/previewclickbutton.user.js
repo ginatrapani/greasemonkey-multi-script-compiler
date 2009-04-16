@@ -1,3 +1,4 @@
+
 // Google Reader Preview Enhanced
 // version 1.07g
 // 2008-04-12
@@ -101,21 +102,21 @@ function addStyles(css)
 
 function catchEntryAdded(e)
 {
-var el=e.target;
-if (el.nodeName=='DIV' && el.className.indexOf('entry')>-1)
-{
-if (el.className.indexOf('entry-actions')>-1)
-{
-// Expanding article in list view
-addPreviewButton(el);
+    var el=e.target;
+    if (el.nodeName=='DIV' && el.className.indexOf('entry')>-1)
+    {
+      if (el.className.indexOf('entry-actions')>-1)
+      {
+        // Expanding article in list view
+        addPreviewButton(el);	
+      }
+      else if (getFirstElementMatchingClassName(el,'tbody','card-tbody'))
+      {
+        // Adding article in expanded view
+        addPreviewButton(getFirstElementMatchingClassName(el,'div','entry-actions'));
+      }
+    }
 }
-else if (getFirstElementMatchingClassName(el,'div','card-bottom'))
-{
-// Adding article in expanded view
-addPreviewButton(getFirstElementMatchingClassName(el,'div','entry-actions'));
-}
-}
-} 
 
 function addPreviewButton(el)
 {
@@ -291,3 +292,5 @@ function init()
 document.body.addEventListener('DOMNodeInserted', catchEntryAdded, false);
 document.addEventListener('keydown',handleKeypress, false);
 window.addEventListener('load',init,false);
+
+

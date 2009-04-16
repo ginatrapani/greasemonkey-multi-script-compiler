@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Show Feed Favicons
+// @name           Show Feed Favicons (Firefox 3.1 only)
 // @namespace      http://henrah.googlepages.com
 // @include        htt*://www.google.*/reader/view*
 
@@ -9,69 +9,81 @@
 // @enabledbydefault true
 // ==/UserScript==
 
-var Favicons = {
-	UNFIXED_ICON_XPATH: '//img[contains(@src, "tree-view-subscription") and not(@favicon-domain)]',
-	EXPORT_URL: '/reader/subscriptions/export',
-	FAVICON_URL: ['http://', '/favicon.ico'],
-	PARSE_DOMAIN: /:\/\/([a-z.]+)/,
-	
-	domains: {},
-	
-	loadDomains: function () {
-		var xhr = new XMLHttpRequest();
-		xhr.open('get', this.EXPORT_URL, true);
-		xhr.onload = function(){
-			Favicons.setDomains(xhr.responseXML);
-		};
-		xhr.send('');
-	},
-	
-	parseDomain: function(url) {
-		var match = this.PARSE_DOMAIN.exec(url);
-		return match && match[1];
-	},
-	
-	setDomains: function (opmlDoc) {
-		var outline, i = 0,
-			outlines = opmlDoc.getElementsByTagName('outline');
-			
-		while (outline = outlines[i++]) {
-			if (! outline.hasAttribute('htmlUrl')) continue;
-			var title = outline.getAttribute('title');
-					
-			if (title.length > 24)
-				title = title.substr(0, 21) + '...';
-				
-			this.domains[title] =
-				this.parseDomain(outline.getAttribute('htmlUrl'))
-				|| this.parseDomain(outline.getAttribute('xmlUrl'));
-		}
-		
-		setInterval(function () {
-			Favicons.fixAllIcons();
-		}, 2000);
-	},
-	
-	fixAllIcons: function () {
-		var icon, i = 0, label;
-		var uncorrectedIcons
-			= document.evaluate(this.UNFIXED_ICON_XPATH, document, null, 6, null);
-		while (icon = uncorrectedIcons.snapshotItem(i++)) {
-			label = icon.nextSibling.firstChild.textContent;
-			icon.setAttribute('favicon-domain', this.domains[label]);
-			this.fixIcon(icon);
-		}
-	},
-	
-	fixIcon: function (icon) {
-		this.defaultIcon = icon.src;
-		icon.addEventListener('error', this.revertIcon, false);
-		icon.src = this.FAVICON_URL.join(icon.getAttribute('favicon-domain'));
-	},
-	
-	revertIcon: function (event) {
-		event.target.src = Favicons.defaultIcon;
-	}
+
+// ==UserScript==
+// @name           Favicons for Google Reader
+// @namespace      henrah.googlepages.com
+// @include        htt*://www.google.*/reader/view*
+// ==/UserScript==
+
+function fetch(url, callback) {
+	var xhr = new XMLHttpRequest;
+	xhr.open('get', url);
+	xhr.onload = function () {
+		callback(xhr.responseText);
+	};
+	xhr.send(null);
 };
 
-Favicons.loadDomains();
+function each(list, callback) {
+	Array.prototype.forEach.call(list, callback);
+};
+
+function filter(list, callback) {
+	return Array.prototype.filter.call(list, callback);
+};
+
+// --
+
+var EXPORT_URL = '/reader/subscriptions/export',
+	ICON_CLASS = 'sub-icon',	
+	UNFIXED_ICONS = '.' + ICON_CLASS + ':not([iconbase])',
+	ICON_CLASS = new RegExp('\b' + ICON_CLASS + '\b'),
+	POLL_INTERVAL = 1000,
+	FAVICON_TEMPLATE = ['background-position:0px; background-image:url(/s2/favicons?domain=', ')'],
+	SOURCE_URL_PREFIX = ['xmlUrl="', '" htmlUrl="'];
+
+function drawFavicon(node) {
+	node.style.cssText = FAVICON_TEMPLATE.join(node.getAttribute('iconbase').split('/')[2]);
+};
+
+function getSourceUrlFromOpml(feedUrl, opml) {
+	return (opml.split(SOURCE_URL_PREFIX.join(feedUrl))[1] || '').split('"')[0];
+};
+
+function getIconNodes() {
+	if (document.querySelectorAll)
+		return document.querySelectorAll(UNFIXED_ICONS);
+		
+	return filter(document.getElementsByTagName('span'), function (span) {
+		return ICON_CLASS.test(span.className)
+			&& ! span.hasAttribute('iconbase');
+	});
+};
+
+
+(function () {
+	setTimeout(arguments.callee, POLL_INTERVAL);
+	
+	var iconNodes = document.querySelectorAll(UNFIXED_ICONS);
+	
+	if (! iconNodes.length)
+		return;
+
+	each(iconNodes, function(icon){
+		icon.setAttribute('iconbase', unescape(icon.parentNode.href.split('/')[6]));
+		
+		drawFavicon(icon);
+	});
+
+
+	fetch(EXPORT_URL, function(opml) {
+		each(iconNodes, function(icon){
+			var iconbase = icon.getAttribute('iconbase');
+			
+			icon.setAttribute('iconbase', getSourceUrlFromOpml(iconbase, opml));
+			
+			drawFavicon(icon);
+		});
+	});
+})();
