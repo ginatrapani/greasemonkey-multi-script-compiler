@@ -22,15 +22,14 @@
 {/foreach}
 
 
-    <!--<em:contributor>Greasemonkey Multi-Script Compiler by Gina Trapani (http://www.ginatrapani.org/)</em:contributor>-->
-    <em:contributor>Greasemonkey Compiler by Anthony Lieuallen (http://www.arantius.com/)</em:contributor>
+    <em:contributor>Greasemonkey Multi-Script Compiler by Gina Trapani (http://www.ginatrapani.org/)</em:contributor>
 
     <em:targetApplication RDF:resource="rdf:#$djS7s"/>
  
   </RDF:Description>
    <RDF:Description RDF:about="rdf:#$djS7s"
                    em:id="{$smarty.ldelim}ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
-                   em:minVersion="0.8"
-                   em:maxVersion="3.0.*" />
+                   em:minVersion="{$data.minVersion}"
+                   em:maxVersion="{$data.maxVersion}" />
 
 </RDF:RDF>
