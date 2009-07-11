@@ -17,12 +17,12 @@
 // --------------------------------------------------------------------
 // ==UserScript==
 // @name            Preview Item (Click button)
-// @namespace       http://userscripts.org/scripts/show/9455
+// @namespace       http://userscripts.org/scripts/show/12352
 // @description     Adds a "Preview button" that allows you to view actual article in a frame. Clicking again on that button goes back to RSS view. Does work both in List view and expanded view.
 // @include        htt*://www.google.*/reader/view*
 
-// @author Julien CAROSI
-// @homepage http://userscripts.org/scripts/show/9455
+// @author Julien CAROSI and bryantsai
+// @homepage http://userscripts.org/scripts/show/12352
 // @enabledbydefault true
 // @conflict previewautomatically
 // ==/UserScript==
@@ -44,7 +44,7 @@
 //          added support for https urls
 // v1.07b : makes scrolling to top of article work again because google's code was changed. Same for shortcut
 // v1.07a : makes the script work again because google's code was changed.
-//          added a try/catch statement in order to make the script work even if the code changes again, though not scrolling to the top of article
+//          added a try/catch statement in order to make cccthe script work even if the code changes again, though not scrolling to the top of article
 //          so people can still use the script until an upgrade is released
 // v1.07  : allows clicking on an article's title to show the preview, so you don't need to scroll it down to preview it (was opening the article in a new window previously, now not needed with preview functionnality)
 // v1.06a : fixes compatibility with "find as you type" firefox functionality
@@ -55,7 +55,6 @@
 // --------------------------------------------------------------------
 // Tested on Firefox 1.5 and 2.0
 // --------------------------------------------------------------------
-
 function getFirstElementMatchingClassName(root,tag,class)
 {
   var elements=root.getElementsByTagName(tag); var i=0;
@@ -110,7 +109,7 @@ function catchEntryAdded(e)
         // Expanding article in list view
         addPreviewButton(el);	
       }
-      else if (getFirstElementMatchingClassName(el,'tbody','card-tbody'))
+      else if (getFirstElementMatchingClassName(el,'div','card-bottom')) 
       {
         // Adding article in expanded view
         addPreviewButton(getFirstElementMatchingClassName(el,'div','entry-actions'));
@@ -123,8 +122,8 @@ function addPreviewButton(el)
   // Top link
   var entry=findParentNode(el,'div','entry');	
   var link=getFirstElementMatchingClassName(entry,'a','entry-title-link');
-  link.addEventListener('click', previewMouseClick, false);
-  // link.addEventListener('click', function(e) { if (e.ctrlKey) { previewMouseClick(e); }  }, false);
+  //link.addEventListener('click', previewMouseClick, false);
+  link.addEventListener('click', function(e) { if (!e.ctrlKey) { previewMouseClick(e); }  }, false);
   	
   // Bottom button
   var preview=document.createElement('span');
@@ -148,7 +147,7 @@ function calcEntryIndex(e)
 function previewMouseClick(e)
 {
     var el=e.target;
-    var entry=findParentNode(el,'div','entry');		
+    var entry=findParentNode(el,'div','entry');
 		
     var index = calcEntryIndex(entry);
     preview(entry,index);
@@ -182,7 +181,7 @@ function preview(entry)
     
     var body = getFirstElementMatchingClassName(entry,'div','entry-body');
     var entryBody = getFirstElementMatchingClassName(body,'div','item-body');
-	
+
     if (preview)
     {
        // classic mode-> preview mode
@@ -292,5 +291,3 @@ function init()
 document.body.addEventListener('DOMNodeInserted', catchEntryAdded, false);
 document.addEventListener('keydown',handleKeypress, false);
 window.addEventListener('load',init,false);
-
-

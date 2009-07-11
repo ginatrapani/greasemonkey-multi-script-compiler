@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Show Feed Favicons (Firefox 3.1 only)
+// @name           Show Feed Favicons (Firefox 3.1+ only)
 // @namespace      http://henrah.googlepages.com
 // @include        htt*://www.google.*/reader/view*
 
