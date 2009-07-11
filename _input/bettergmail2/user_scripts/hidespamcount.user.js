@@ -15,5 +15,6 @@
  * Original version by daniel Rozenberg, http://userscripts.org/scripts/show/2210
  * This script is Public Domain.
  */
-GM_addStyle("span#ds_spam b,.pX a[href$='#spam']{visibility:hidden;}span#ds_spam b::before,.pX a[href$='#spam']::before{content:'Spam';visibility:visible;font-weight:400;}");
+GM_addStyle("span#ds_spam b, tr.Alfa2e a[href$='#spam']{visibility:hidden;} span#ds_spam b:before, tr.Alfa2e a[href$='#spam']:before{content:'Spam';visibility:visible;font-weight:400;text-decoration:underline;}");
+GM_addStyle("tr.Alfa2e.ol a[href$='#spam']{visibility:visible;} tr.Alfa2e.ol a[href$='#spam']:before{content: normal;}");
 
