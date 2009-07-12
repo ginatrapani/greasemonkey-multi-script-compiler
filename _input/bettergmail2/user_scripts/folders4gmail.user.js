@@ -10,15 +10,6 @@
 // @tab Sidebar
 // ==/UserScript==
 
-
-/*
-// @version       1.41 2009-03-03
- * Written by Arend v. Reinersdorff, www.arend-von-reinersdorff.com
- * This script is Public Domain. You are welcome to use it in any way you like.
- */
-
-//refresh is set only once, in the top frame
-// G. Trapani:  Had to take out this if, it kept script from working in Better Gmail 2.
 /*
  * Written by Arend v. Reinersdorff, arendvr.com
  * Folders4Gmail is Public Domain.
@@ -146,7 +137,7 @@ function checkForLabelUpdates(){
         $labelNodes.removeClass("f4g_isInDom");
     }
 
-    var newLabels = $labelParent.find("td > div:has(a):not(div.f4g_modified)");
+    var newLabels = $labelParent.find("td > div.n2");
     newLabels.each(addLabel);
 
     if(labelMap.size() > $labelParent.find("span.f4g_countWatch").length){
