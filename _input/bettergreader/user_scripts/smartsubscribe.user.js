@@ -8,6 +8,8 @@
 // @enabledbydefault false
 // @include *
 // @exclude htt*://www.google.*/reader/view*
+// @versionorlastupdate May 06 2006
+
 // ==/UserScript==
 
 /*

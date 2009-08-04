@@ -5,6 +5,8 @@
 // @author        The How-To Geek
 // @homepage      http://userstyles.org/styles/19590
 // @include       htt*://www.google.*/reader/*
+
+// @versionorlastupdate Jul 17 2009
 // ==/UserScript==
 
 (function() {

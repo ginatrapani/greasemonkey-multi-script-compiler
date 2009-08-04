@@ -25,6 +25,7 @@
 // @homepage http://userscripts.org/scripts/show/12352
 // @enabledbydefault true
 // @conflict previewautomatically
+// @versionorlastupdate  Jan 16 2009
 // ==/UserScript==
 //
 // --------------------------------------------------------------------

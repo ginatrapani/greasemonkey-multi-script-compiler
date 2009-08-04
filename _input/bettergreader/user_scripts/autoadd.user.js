@@ -6,6 +6,7 @@
 
 // @author Simon Lieschke
 // @homepage http://lieschke.net/projects/greasemonkey/
+// @versionorlastupdate Dec 22 2007
 // ==/UserScript==
 
 (function() {

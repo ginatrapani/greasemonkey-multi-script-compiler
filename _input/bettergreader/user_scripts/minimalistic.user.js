@@ -7,6 +7,7 @@
 
 // @tab Skins
 // @homepage http://userscripts.org/scripts/show/12197
+// @versionorlastupdate Dec 16 2008
 // ==/UserScript==
 
 

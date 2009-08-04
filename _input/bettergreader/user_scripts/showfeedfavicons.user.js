@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Show Feed Favicons (Firefox 3.1+ only)
+// @name           Show Feed Favicons
 // @namespace      http://henrah.googlepages.com
 // @include        htt*://www.google.*/reader/view*
 
@@ -7,14 +7,10 @@
 // @description Displays site favicons for each feed inside Reader. (Not compatible with OS X skin.)
 // @homepage  http://userscripts.org/scripts/show/24371
 // @enabledbydefault true
+// @versionorlastupdate Mar 17 2009
 // ==/UserScript==
 
 
-// ==UserScript==
-// @name           Favicons for Google Reader
-// @namespace      henrah.googlepages.com
-// @include        htt*://www.google.*/reader/view*
-// ==/UserScript==
 
 function fetch(url, callback) {
 	var xhr = new XMLHttpRequest;

@@ -6,7 +6,7 @@
 
 // @author Gautham Pai
 // @homepage http://userscripts.org/scripts/show/24955
-
+// @versionorlastupdate Nov 9 2008
 // ==/UserScript==
 
 /* Modifications to this script is permitted provided this comment is retained in its entirety.

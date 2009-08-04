@@ -6,6 +6,8 @@
 // @homepage     http://userscripts.org/scripts/show/16975
 // @include       htt*://www.google.*/reader/view*
 
+// @versionorlastupdate  Aug 11 2008
+
 
 // @tab Skins
 // ==/UserScript==
