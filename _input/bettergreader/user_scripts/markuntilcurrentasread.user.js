@@ -1,11 +1,11 @@
 // ==UserScript==
-// @name          Mark Until Current As Read (Shift+Y)
+// @name          Mark Until Current As Read (Shift+Y) 
 // @namespace     http://buzypi.in/
 // @description   Mark all entries up to the current entry as read (Shift+Y), marks all items below the current item as read (Shift+I).
 // @include             htt*://www.google.*/reader/*
 
 // @author Gautham Pai
-// @homepage http://buzypi.in/
+// @homepage http://userscripts.org/scripts/show/24955
 
 // ==/UserScript==
 
