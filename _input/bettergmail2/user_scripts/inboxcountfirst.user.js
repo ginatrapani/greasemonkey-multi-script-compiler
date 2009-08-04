@@ -32,6 +32,7 @@
 // @author Jon Ramsey, Gina Trapani
 // @tab General
 // @enabledbydefault true
+// @versionorlastupdate Jun 28 2007
 // ==/UserScript==
 
 

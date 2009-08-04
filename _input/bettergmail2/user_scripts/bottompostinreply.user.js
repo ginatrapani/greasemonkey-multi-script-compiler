@@ -7,6 +7,7 @@
 // @author Henrik N. and Rob Wilkerson
 // @homepage http://userscripts.org/scripts/show/14256
 // @tab Compose
+// @versionorlastupdate Nov 20 2007
 // ==/UserScript==
 
 document.addEventListener(

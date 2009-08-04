@@ -9,6 +9,7 @@
 // @homepage http://userscripts.org/scripts/show/22660
 // @author Arend v. Reinersdorff
 // @tab Sidebar
+// @versionorlastupdate Jul 5 2009
 // ==/UserScript==
 
 /* Written 2008 by Arend v. Reinersdorff, arendvr.com

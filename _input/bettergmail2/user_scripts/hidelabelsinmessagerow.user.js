@@ -8,7 +8,7 @@
 // @include        https://mail.google.com/*
 // @include        http://mail.google.com/*
 
-
+// @versionorlastupdate Mar 12 2009
 // @tab Messages
 // ==/UserScript==
 (function() {

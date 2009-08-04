@@ -12,6 +12,7 @@
 // @enabledbydefault false
 // @homepage http://userscripts.org/scripts/show/39432
 // @conflict showunreadmessagefaviconalerts
+// @versionorlastupdate Apr 9 2009
 // ==/UserScript==
 
 // By default, Gmail email accounts get a red icon, and hosted (Google Apps For

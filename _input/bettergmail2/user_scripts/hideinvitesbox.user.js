@@ -9,6 +9,7 @@
 
 // @tab Sidebar
 // @enabledbydefault true
+// @versionorlastupdate Mar 05 2009
 // ==/UserScript==
 var css = "@namespace url(http://www.w3.org/1999/xhtml); div.pY { display: none !important; }";
 if (typeof GM_addStyle != "undefined") {

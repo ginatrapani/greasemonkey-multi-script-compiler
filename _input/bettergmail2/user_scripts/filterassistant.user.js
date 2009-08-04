@@ -29,6 +29,7 @@
 // @include       http://mail.google.com/*
 
 // @tab Messages
+// @versionorlastupdate Jul 30 2009, Auto-update removed by G. Trapani
 // ==/UserScript==
 //
 
@@ -37,8 +38,6 @@ window.addEventListener('load', function() {
 	// autoupdate function credit to Bjorn Rosell http://userscripts.org/scripts/show/7715
 	function autoupdate() {
 		//debug("[autoupdate]: Entering...");
-		GM_addStyle(FILTERASST_STYLES);
-
 		//debug('[autoupdate]: Leaving...');
 	}
 }, true);
@@ -927,7 +926,6 @@ function hasFilter(fd) {
                 fd.hasWord        !=filterData[i][2][3] ||
                 fd.doesntHave    !=filterData[i][2][4] ||
                 fd.hasAttachment.toString()!=filterData[i][2][5]) continue;
-
             return i;
         }
     }

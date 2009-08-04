@@ -8,9 +8,8 @@
 // @homepage http://userscripts.org/scripts/show/13700
 // @author Michael Lieberman
 // @tab Messages
+// @versionorlastupdate Mar 16 2009
 // ==/UserScript==
-
-// Most of the functions below were borrowed from Gmail Macros (New)
 
 // Most of the functions below were borrowed from Gmail Macros (New)
 
@@ -22,10 +21,14 @@ window.addEventListener('load', function() {
   if (unsafeWindow.gmonkey) {
     unsafeWindow.gmonkey.load('1.0', function(g) {
       gmail = g;
-      gmail.registerViewChangeCallback(showDetails);
+      window.setTimeout(registerCallback, 500);
     });
   }
 }, true);
+
+function registerCallback() {
+    gmail.registerViewChangeCallback(showDetails);
+}
 
 function showDetails() {
   var nodes = 

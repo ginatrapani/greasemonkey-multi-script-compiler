@@ -7,6 +7,7 @@
 // @include       http://mail.google.com/*
 // @include       https://mail.google.com/*
 
+// @versionorlastupdate Mar 07 2009
 // @tab Sidebar
 // ==/UserScript==
 (function() {

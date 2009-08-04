@@ -9,6 +9,7 @@
 
 // @tab Messages
 // @enabledbydefault true
+// @versionorlastupdate Mar 05 2009
 // ==/UserScript==
 var css = "@namespace url(http://www.w3.org/1999/xhtml); table.zt tr.yO:hover { background-color: rgb(255,235,134) !important;} table.zt tr.zE:hover { background-color: rgb(205,243,159) !important;}";
 if (typeof GM_addStyle != "undefined") {
