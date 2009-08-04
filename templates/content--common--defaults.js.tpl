@@ -10,7 +10,7 @@ var {$data.shortname}_tabs = {$smarty.ldelim}
 }
 
 
-function {$data.shortname}_userScript(id, enabled, full_name, author, homepage, filename, description, enabled_by_default, tab, conflicts ) {$smarty.ldelim}
+function {$data.shortname}_userScript(id, enabled, full_name, author, homepage, filename, description, enabled_by_default, tab, conflicts, versionorlastupdate ) {$smarty.ldelim}
 	this.id = id;
 	this.enabled = enabled;
 	this.full_name = full_name;
@@ -21,10 +21,11 @@ function {$data.shortname}_userScript(id, enabled, full_name, author, homepage, 
 	this.enabled_by_default = enabled_by_default;
 	this.tab = tab;
 	this.conflicts = conflicts;
+	this.versionorlastupdate = versionorlastupdate;
 }
 
 
-function {$data.shortname}_makeNewUserScript(id, author, homepage, enabled_by_default, tab ) {$smarty.ldelim}
+function {$data.shortname}_makeNewUserScript(id, author, homepage, enabled_by_default, tab, versionorlastupdate ) {$smarty.ldelim}
 	//alert("making " + id);
 	return new {$data.shortname}_userScript(id, 
 				 {$data.shortname}_getOrElseSet(id, enabled_by_default), 
@@ -36,10 +37,10 @@ function {$data.shortname}_makeNewUserScript(id, author, homepage, enabled_by_de
 				enabled_by_default,
 				tab,
 				null,
-				null);
+				versionorlastupdate);
 }
 
-function {$data.shortname}_makeNewUserScriptWithConflicts(id, author, homepage, enabled_by_default, tab, conflicts) {$smarty.ldelim}
+function {$data.shortname}_makeNewUserScriptWithConflicts(id, author, homepage, enabled_by_default, tab, conflicts, versionorlastupdate) {$smarty.ldelim}
 	return new {$data.shortname}_userScript(id, 
 				 {$data.shortname}_getOrElseSet(id, enabled_by_default), 
 				 {$data.shortname}_usLabels.GetStringFromName(id+"_title"), 
@@ -50,10 +51,10 @@ function {$data.shortname}_makeNewUserScriptWithConflicts(id, author, homepage, 
 				enabled_by_default,
 				tab,
 				conflicts,
-				null);
+				versionorlastupdate);
 }
 
-function {$data.shortname}_makeNewSkin(id, author, homepage ) {$smarty.ldelim}
+function {$data.shortname}_makeNewSkin(id, author, homepage, versionorlastupdate ) {$smarty.ldelim}
 	return new {$data.shortname}_userScript(id, 
 				 {$data.shortname}_getOrElseSet(id, false), 
 				 {$data.shortname}_usLabels.GetStringFromName(id+"_title"), 
@@ -64,7 +65,7 @@ function {$data.shortname}_makeNewSkin(id, author, homepage ) {$smarty.ldelim}
 				false,
 				 {$data.shortname}_tabs.SKINS,
 				null,
-				null);
+				versionorlastupdate);
 }
 
 
@@ -87,11 +88,13 @@ var {$data.shortname}_scripts = new Array(
 					'{$s.author}', 
 					'{$s.homepage}', 
 					{$s.enabledbydefault},
-					 {$data.shortname}_tabs.{$s.tab|upper}){if $smarty.foreach.sfe.last}  {else},{/if}
+					 {$data.shortname}_tabs.{$s.tab|upper},
+					'{$s.versionorlastupdate}'){if $smarty.foreach.sfe.last}  {else},{/if}
 		{else}
 		new {$data.shortname}_makeNewSkin('{$s.id}', 
 					'{$s.author}', 
-					'{$s.homepage}'){if $smarty.foreach.sfe.last}  {else},{/if}
+					'{$s.homepage}',
+					'{$s.versionorlastupdate}'){if $smarty.foreach.sfe.last}  {else},{/if}
 			{assign var='has_skins' value='yes'}
 		{/if}
 	{else}
@@ -100,7 +103,8 @@ var {$data.shortname}_scripts = new Array(
 					'{$s.homepage}', 
 					{$s.enabledbydefault},
 					 {$data.shortname}_tabs.{$s.tab|upper},
-					 new Array({$s.conflict}) ){if $smarty.foreach.sfe.last}  {else},{/if}
+					 new Array({$s.conflict}),
+					'{$s.versionorlastupdate}' ){if $smarty.foreach.sfe.last}  {else},{/if}
 	{/if}	 
 				 
 {/foreach}
@@ -114,7 +118,8 @@ var {$data.shortname}_scripts = new Array(
 						'',
 						'',
 						true,
-						{$data.shortname}_tabs.SKINS)
+						{$data.shortname}_tabs.SKINS,
+						'')
 	{/if}
 
 

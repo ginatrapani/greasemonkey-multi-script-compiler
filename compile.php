@@ -119,11 +119,12 @@ foreach ($GMSC['scriptfilenames'] as $script) {
 			if (preg_match('/@enabledbydefault\b(.*)/', $line, $m)) {
 				$scripts[$script]['enabledbydefault']=trim($m[1]);
 			}
-			
+			if (preg_match('/@versionorlastupdate\b(.*)/', $line, $m)) {
+				$scripts[$script]['versionorlastupdate']=trim($m[1]);
+			}
 			if (preg_match('/@description\b(.*)/', $line, $m)) {
 				$scripts[$script]['description']=trim($m[1]);
 			}
-
 			if (preg_match('/@include\b(.*)/', $line, $m)) {
 				$scripts[$script]['include'][]=trim($m[1]);
 			}
@@ -156,11 +157,13 @@ foreach ($GMSC['scriptfilenames'] as $script) {
  		
  		echo "ENABLED BY DEFAULT:".$scripts[$script]['enabledbydefault']."\n";
 
-
 		//set default tab
 		if (empty($scripts[$script]['tab'])) $scripts[$script]['tab']="General";
  		echo "LOCATED ON TAB:".$scripts[$script]['tab']."\n";
 
+		//set version or last update
+		if (empty($scripts[$script]['versionorlastupdate'])) $scripts[$script]['versionorlastupdate']="";
+  		echo "LAST UPDATE:".$scripts[$script]['versionorlastupdate']."\n";
  		
 		 //convert includes/excludes
 		$scripts[$script]['include']=array_map('convertToRegExp', $scripts[$script]['include']);

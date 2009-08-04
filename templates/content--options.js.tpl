@@ -100,7 +100,7 @@ function {$data.shortname}_describescripts() {$smarty.ldelim}
 	var totalScripts = {$data.shortname}_scripts.length;
     for (var i = 0; i < totalScripts; i++) {$smarty.ldelim}
     	if ( {$data.shortname}_scripts[i].homepage != '') {$smarty.ldelim}
-			document.getElementById("script-listing").contentDocument.write('<li><b><a href="'+ {$data.shortname}_scripts[i].homepage+'" onclick="javascript:window.open(\''+ {$data.shortname}_scripts[i].homepage+'\');return false;">'+ {$data.shortname}_scripts[i].full_name +'</a></b><br />'+{$data.shortname}_scripts[i].description+'<br />'+{$data.shortname}_usLabels.GetStringFromName("script_by")+' '+{$data.shortname}_scripts[i].author+'</li>');
+			document.getElementById("script-listing").contentDocument.write('<li><b><a href="'+ {$data.shortname}_scripts[i].homepage+'" onclick="javascript:window.open(\''+ {$data.shortname}_scripts[i].homepage+'\');return false;">'+ {$data.shortname}_scripts[i].full_name +'</a></b><br />'+{$data.shortname}_scripts[i].description+' <i>'+ {$data.shortname}_scripts[i].versionorlastupdate +'</i><br />'+{$data.shortname}_usLabels.GetStringFromName("script_by")+' '+{$data.shortname}_scripts[i].author+'</li>');
 		}
 	}
 	document.getElementById("script-listing").contentDocument.write("</ul></body></html>");
