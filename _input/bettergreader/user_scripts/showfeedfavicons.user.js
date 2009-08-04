@@ -4,7 +4,7 @@
 // @include        htt*://www.google.*/reader/view*
 
 // @author henrah
-// @description Displays site favicons for each feed inside Reader. (Not compatible with OS X skin.)
+// @description Displays site favicons for each feed inside Reader.
 // @homepage  http://userscripts.org/scripts/show/24371
 // @enabledbydefault true
 // @versionorlastupdate Mar 17 2009
