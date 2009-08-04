@@ -12,6 +12,7 @@
 //
 // Released under GPL license.
 //
+date_default_timezone_set('America/Los_Angeles');
 
 require('Smarty.class.php');
 
