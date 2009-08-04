@@ -150,7 +150,7 @@ function checkForLabelUpdates(){
         lastLabelInView = "";
     }
 
-    window.setTimeout(checkForLabelUpdates, 1000);
+    window.setTimeout(checkForLabelUpdates, 5000);
 }
 
 
