@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Attachment Icons
 // @namespace     http://userstyles.org
-// @description	  See from your inbox what kind of attachment an email has. (inspired from the Gmail skins extension)
+// @description	  See what kind of attachment an email has in list view.
 // @author        Moktoipas
 // @homepage      http://userstyles.org/style/show/226
 // @include       http://mail.google.com/*
