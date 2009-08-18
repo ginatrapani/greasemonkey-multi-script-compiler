@@ -7,6 +7,7 @@
 // @include       htt*://www.google.*/reader/*
 
 // @versionorlastupdate Jul 17 2009
+// @tab View
 // ==/UserScript==
 
 (function() {

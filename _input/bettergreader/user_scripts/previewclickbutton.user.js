@@ -26,6 +26,7 @@
 // @enabledbydefault true
 // @conflict previewautomatically
 // @versionorlastupdate  Jan 16 2009
+// @tab General
 // ==/UserScript==
 //
 // --------------------------------------------------------------------

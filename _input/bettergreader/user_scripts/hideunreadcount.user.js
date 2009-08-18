@@ -6,6 +6,8 @@
 // @homepage      http://userstyles.org/styles/11843
 // @include             htt*://www.google.*/reader/*
 // @versionorlastupdate Nov 05 2008
+
+// @tab View
 // ==/UserScript==
 (function() {
 var css = ".unread-count { display: none; } #reading-list-unread-count { display: none; }";

@@ -18,6 +18,7 @@
 // @homepage http://www.userscripts.org/scripts/show/6412
 // @versionorlastupdate Nov 16 2006
 // @conflict previewclickbutton
+// @tab  General
 // ==/UserScript==
 
 document.getElementsByClassName = function(className, parentNode) {

@@ -1,12 +1,13 @@
 // ==UserScript==
-// @name          Mark Until Current As Read (Shift+Y) 
+// @name          Mark Until Current As Read (Ctrl+Alt+Y and Ctrl+Alt+I) 
 // @namespace     http://buzypi.in/
-// @description   Mark all entries up to the current entry as read (Shift+Y), marks all items below the current item as read (Shift+I).
+// @description   Mark all entries up to the current entry as read (Ctrl+Alt+Y), marks all items below the current item as read (Ctrl+Alt+I).
 // @include             htt*://www.google.*/reader/*
 
 // @author Gautham Pai
 // @homepage http://userscripts.org/scripts/show/24955
-// @versionorlastupdate Nov 9 2008
+// @versionorlastupdate Aug 14 2009
+// @tab General
 // ==/UserScript==
 
 /* Modifications to this script is permitted provided this comment is retained in its entirety.
@@ -67,9 +68,9 @@ function getAllEntries(){
 	var allEntries = new Array();
 	for(var i=0;i<allDivs.length;i++){		
 		if(typeof(allDivs[i].className) != 'undefined' &&
-				allDivs[i].className == 'entry'
-				|| allDivs[i].id == 'current-entry'
-				|| allDivs[i].className == 'entry overflow-settable'){
+				(allDivs[i].className.match('entry ') != null && allDivs[i].className.match("read") == null)
+				|| allDivs[i].id == 'current-entry'){
+
 			allEntries.push(allDivs[i]);
 		}
 	}
@@ -78,16 +79,16 @@ function getAllEntries(){
 
 function keyPressEvent(event){
 	var kcode = (event.keyCode)?event.keyCode:event.which;
+	var ctrlKeyPressed =event.ctrlKey;
+	var altKeyPressed =event.altKey;
 
-	
 	var k = String.fromCharCode(kcode);
 
-	
-	if(k == 'Y'){
-    	markUntilCurrentAsRead();
-   } else if(k == 'I'){
-   	markAfterCurrentAsRead();
-   }
-}
+	if(ctrlKeyPressed && altKeyPressed && (k == 'y' || k == 'Y')){
+		markUntilCurrentAsRead();
+	} else if(ctrlKeyPressed && altKeyPressed && (k == 'i' || k == 'I')){
+		markAfterCurrentAsRead();
+	}
+} 
 
 document.addEventListener("keypress", keyPressEvent, true);
