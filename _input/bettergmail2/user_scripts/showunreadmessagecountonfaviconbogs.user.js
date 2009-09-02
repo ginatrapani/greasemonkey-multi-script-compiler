@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           Unread Message Count in Favicon
+// @name           Show Unread Message Count on Favicon (Bogs)
 // @description    Shows the number of unread Gmail messages in the favicon in your Firefox tab.
 // @version        1.02
 // @date           2000-04-09
@@ -11,7 +11,7 @@
 
 // @enabledbydefault false
 // @homepage http://userscripts.org/scripts/show/39432
-// @conflict showunreadmessagefaviconalerts
+// @conflict showunreadmessagecountinfaviconwooley
 // @versionorlastupdate Apr 9 2009
 // ==/UserScript==
 

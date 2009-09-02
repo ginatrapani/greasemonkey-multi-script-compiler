@@ -15,31 +15,27 @@
 var associateID = 'betteraddons-20';
 
 function getASIN(href) {
-  var asinMatch;
-  asinMatch = href.match(/\/exec\/obidos\/ASIN\/(\w{10})/i);
-  if (!asinMatch) { asinMatch = href.match(/\/gp\/product\/(\w{10})/i); }
-  if (!asinMatch) { asinMatch = href.match(/\/exec\/obidos\/tg\/detail\/\-\/(\w{10})/i); }
-  if (!asinMatch) { asinMatch = href.match(/\/dp\/(\w{10})/i); }
-  if (!asinMatch) { return null; }
-  return asinMatch[1];
+	var asinMatch;
+	asinMatch = href.match(/\/exec\/obidos\/ASIN\/(\w{10})/i);
+	if (!asinMatch) { asinMatch = href.match(/\/gp\/product\/(\w{10})/i); }
+	if (!asinMatch) { asinMatch = href.match(/\/exec\/obidos\/tg\/detail\/\-\/(\w{10})/i); }
+	if (!asinMatch) { asinMatch = href.match(/\/dp\/(\w{10})/i); }
+	if (!asinMatch) { return null; }
+	return asinMatch[1];
 }
 
 
 (function() {
-var allLinks = window.content.document.getElementsByTagName("a");
-var asin = '';
-for (i = 0; i < allLinks.length; i++) {
-   var href = allLinks[i].href;
-   if (href.match(/amazon\./i) && !href.match(/palitoy/i)) {
-	   asin = getASIN(href);
-	   if (asin != null) {
-	   		if (GM_getValue("associateID")=='')
-				allLinks[i].setAttribute("href", "http://amazon.com/o/ASIN/" + asin );
-			else
-				allLinks[i].setAttribute("href", "http://amazon.com/o/ASIN/" + asin + "/ref=nosim/"+associateID);
+	var allLinks = window.content.document.getElementsByTagName("a");
+	var asin = '';
+	for (i = 0; i < allLinks.length; i++) {
+		var href = allLinks[i].href;
+		if (href.match(/amazon\./i) && !href.match(/palitoy/i)) {
+			asin = getASIN(href);
+			if (asin != null) {
+				allLinks[i].setAttribute("href", "http://" + document.domain + "/o/ASIN/" + asin + "/ref=nosim/"+associateID);
+			 }	
 		}
 	}
-}
-
 
 })();

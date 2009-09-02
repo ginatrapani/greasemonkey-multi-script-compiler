@@ -2,7 +2,7 @@
 // @name          Summarize Unread Messages by Sender
 // @description   Displays a summary of unread emails in Gmail's current view, grouped by sender with unread count.
 // @copyright     2009+, Winston Teo Yong Wei (http://www.winstonyw.com)
-// @version       0.0.2
+// @version       0.0.6
 
 // @include       http://mail.google.com/mail/*
 // @include       https://mail.google.com/mail/*
@@ -12,7 +12,7 @@
 // @author Winston Teo Yong Wei
 // @enabledbydefault false
 // @homepage http://www.winstonyw.com/2009/08/08/greasemonkey-script-gmail-unreads-summary/
-// @versionorlastupdate v.0.0.3, modified to add jQuery by G.Trapani
+// @versionorlastupdate v.0.0.6, modified to add jQuery by G.Trapani
 // @tab General
 // ==/UserScript==
 
@@ -61,10 +61,15 @@ function letsJQuery() {
 	      // Gmail API
 	      var head  = GMAIL.getMastheadElement();
 	      var body  = GMAIL.getActiveViewElement();
+	      var navi  = GMAIL.getNavPaneElement();
 
 	      // jQuerised JS Elements
 	      var jhead = $(head);
 	      var jbody = $(body);
+	      var jnavi = $(navi);
+
+	      // Main URL
+	      var dhref = jnavi.find('a.n0:first').attr('href');
 
 	      // Reset
 	      var jxist = jhead.find('div#gmus');
@@ -82,7 +87,7 @@ function letsJQuery() {
 
 	        var sname = $(item).find('span.zF').html();
 	        var email = $(item).find('span.zF').attr('email');
-	        var query = location.protocol + "//" + location.host + location.pathname + '#search/in:inbox+label:unread+from:' + email;
+	        var query = dhref.substring(0, dhref.indexOf('#')) + '#search/in:inbox+label:unread+from:' + encodeURIComponent(email);
 
 	        if (unreads[email] == null) {
 	          unreads[email] = new Array(sname, email, query, 1);
@@ -98,12 +103,12 @@ function letsJQuery() {
 	        // Create Elements
 	        var jelem = $('<div id="gmus" style="display: block; overflow: hidden; background: #E0ECFF; border: 4px solid #C3D9FF; margin: 10px; padding: 10px; ">&nbsp;</div>');
 	        jelem.append('<h5 class="header" style="display: block; float: left; padding: 0px; margin: 2px 0;">Summary of Unread Emails in Current View' + ' (Total Items: ' + cnt + ')' + '</h5>');
-	        jelem.append('<span id="gmus_minmax" style="float: right; cursor: pointer; font-family: Courier; font-size: 12px; color: #0000CC;">[-]</span>');
+	        jelem.append('<span id="gmus_minmax" style="float: right; cursor: pointer; font-family: Courier; font-size: 12px; color: #0000CC;">[' + (GM_getValue('gmus_hide', false) ? '+' : '-') + ']</span>');
 
-	        var contents = '<div id="gmus_content"><ul style="list-style-type: none; padding: 0px; margin 0px;">'
+	        var contents = '<div id="gmus_content" style="display:' + (GM_getValue('gmus_hide', false) ? 'none' : 'block') + ';"><ul style="list-style-type: none; padding: 0px; margin 0px;">'
 	        for (var email in unreads) {
 	          var unread = unreads[email];
-	          contents  += '<li style="display: block; float: left; margin: 2px 10px 2px 5px; width: 185px; font-size: 12px; font-weight: bold;"><a href="' + unread[2] + '" title="' + unread[1] + '">' + unread[0] + ' (' + unread[3] + ')' + '</a></li>';
+	          contents  += '<li style="display: block; float: left; margin: 2px 10px 2px 5px; width: 185px; font-size: 12px; font-weight: bold;"><a target="_top" href="' + unread[2] + '" title="' + unread[1] + '">' + unread[0] + ' (' + unread[3] + ')' + '</a></li>';
 	        }
 	        contents    += '</ul></div>';
 	        jelem.append(contents);
@@ -125,17 +130,17 @@ function letsJQuery() {
 	    var jspan = jhead.find('span#gmus_minmax');
 	    var jcont = jhead.find('div#gmus_content');
 
-	    jspan.toggle(
-	      function() {
-	        jspan.html('[+]');
-	        jcont.hide();
-	      },
-	      function() {
+	    jspan.bind('click', function() {
+	      if (GM_getValue('gmus_hide',false)) {
 	        jspan.html('[-]');
 	        jcont.show();
+	        GM_setValue('gmus_hide', false);
+	      } else {
+	        jspan.html('[+]');
+	        jcont.hide();
+	        GM_setValue('gmus_hide', true);
 	      }
-
-	    );
+	    })
 
 	  };
 
