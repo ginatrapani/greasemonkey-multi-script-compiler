@@ -18,7 +18,7 @@
 // @tab General
 // @enabledbydefault false
 
-// @conflict showunreadmessagecountinfavicon
+// @conflict showunreadmessagecountonfaviconbogs
 
 // ==/UserScript==
 

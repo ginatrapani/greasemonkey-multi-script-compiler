@@ -7,7 +7,7 @@
 // @include       *
 
 // @author Gina Trapani
-// @homepage http://ginatrapani.org/workshop/greasemonkey/
+// @homepage http://groups.google.com/group/better-gmail-2-firefox-extension
 // @enabledbydefault false
 // ==/UserScript==
 
@@ -24,6 +24,18 @@ function getASIN(href) {
 	return asinMatch[1];
 }
 
+function getDomain(href) {
+	var d = '';
+	if (href.substring(0,11)=='http://www.') {
+		d = href.replace('http://www.', '');
+	} else {
+		if ((href.substring(0,7)=='http://'))
+			d = href.replace('http://', '');
+	}
+	d = d.substring(0, d.indexOf('/'));
+
+	return d;
+}
 
 (function() {
 	var allLinks = window.content.document.getElementsByTagName("a");
@@ -33,9 +45,11 @@ function getASIN(href) {
 		if (href.match(/amazon\./i) && !href.match(/palitoy/i)) {
 			asin = getASIN(href);
 			if (asin != null) {
-				allLinks[i].setAttribute("href", "http://" + document.domain + "/o/ASIN/" + asin + "/ref=nosim/"+associateID);
-			 }	
+				domain = getDomain(href);
+				if ( domain.match(/amazon\./i) ) {
+					allLinks[i].setAttribute("href", "http://" + domain + "/o/ASIN/" + asin + "/ref=nosim/"+associateID);
+				 }	
+			}
 		}
 	}
-
 })();
