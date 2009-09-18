@@ -34,7 +34,12 @@ var prefixIdx = {reg:0, folder:1};
 const YQL_BASE_URL = 'http://query.yahooapis.com/v1/public/yql?q=';
 const YQL_GET_HTML = 'select%20*%20from%20html%20where';	// URI-encoded
 const YQL_HTML_QUERY = YQL_BASE_URL+YQL_GET_HTML;
-const FAVICON_XPATH = "/html/head/link[@rel='icon' or @rel='shortcut icon']";
+const FAVICON_XPATH = "/html/head/link[@rel='icon'] | /html/head/link[@rel='ICON'] | /html/head/link[@rel='shortcut icon'] | /html/head/link[@rel='SHORTCUT ICON']";
+
+const URL_PATTERN = "^http://"; // "http://" at the start of the string
+const DND_MSG_XPATH = "/html/body/div[4]/div/span[@id='message-area-inner']";
+const NAV_BAR_XPATH = "/html/body/div[8]/div[@id='nav']";
+const FEED_ADD_MSG_XPATH = "/html/body/div[8]/div[2]/table/tbody/tr/td[2]/div/div[2]";
 
 // The OPML file is the file you get when you try to export your Google Reader subscriptions.
 // It contains (amongst other things) the mapping between each site's URL and feed URL.
@@ -63,7 +68,7 @@ function replaceAllFeedIcons(opml)
 			var srcURL = opml.evaluate(ICON_XPATH_PREFIX[type]+feedURL+"']/@htmlUrl", opml, null,
 				XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.textContent;
 			srcURL = "http://"+srcURL.split("/", 3)[2];	// get the root URL
-			
+
 			var imgNode = document.createElement("img");
 			imgNode.style.borderWidth = "0px";
 			/* By setting the class attribute to be the same, we can ensure that the same CSS styles get applied.
@@ -71,29 +76,38 @@ function replaceAllFeedIcons(opml)
 			imgNode.className = currIcon.className;
 			// remove the default feed icon
 			imgNode.style.backgroundImage = "none";
-		
+			imgNode.style.visibility = "hidden";
+			imgNode.setAttribute("alreadysearchedpage", "false");
+
 			var defaultFaviconURL;	// our first guess at the correct URL
 			var faviconURL = GM_getValue(srcURL);
-		
+
 			if (faviconURL == undefined || faviconURL == "")
 				defaultFaviconURL = srcURL + "/favicon.ico";
 			else
 				defaultFaviconURL = faviconURL;
-			
+
 			imgNode.src = defaultFaviconURL;
 			// if the image loads correctly, then the favicon is in the default location
 			imgNode.addEventListener("load",
 				(function(srcURL, defaultFaviconURL)
 				{
-					return function() {GM_setValue(srcURL, defaultFaviconURL);};
+					return function() 
+						{
+							this.style.visibility = "visible";
+							GM_setValue(srcURL, defaultFaviconURL);
+						};
 				})(srcURL, defaultFaviconURL),
 				true);
 			// otherwise, its in a non-default location and we have to hunt for it
 			imgNode.addEventListener("error",
-				(function(currIcon, imgNode, srcURL)
+				(function(imgNode, srcURL, currIcon)
 				{
 					return function()
 						{
+							if (this.getAttribute("alreadysearchedpage") == "true")
+								return;
+
 							/* make use of the YQL service from Yahoo! which will:
 							 * 1) convert HTML into well-formed XML
 							 * 2) lets us retrieve selective parts of a webpage, based on an XPath query -
@@ -114,7 +128,7 @@ function replaceAllFeedIcons(opml)
 											var urlResultDoc = new XML(response.responseText.replace(/^<\?xml [^>]*>\s*/,''));
 											var urlResult = urlResultDoc.results;
 											var url, faviconURL;
-											
+
 											if (urlResult.link.length() == 0)	//	no favicons :(
 											{
 												/* therefore, go back to using the generic icon provided by Google Reader,
@@ -131,34 +145,46 @@ function replaceAllFeedIcons(opml)
 												url = urlResult.link.@href;
 											else if (urlResult.link.length() == 2)
 												/* this should rarely happen, but some websites will specify 2 link tags:
-												 * one with rel="shortcut-icon" and one with rel="icon".  I've arbitrarily
+												 * one with rel="shortcut icon" and one with rel="icon".  I've arbitrarily
 												 * chosen to select the former.
 												 */
-												url = urlResult.link.(@rel == "shortcut-icon").@href;
-											
-											if (url.charAt(0) == '/')	// relative path
-												faviconURL = srcURL+url;
-											else
+												url = urlResult.link.(@rel.toLowerCase() == "shortcut icon").@href;
+
+											if (url.search(new RegExp(URL_PATTERN)) != -1) // absolute path
 												faviconURL = url;
-		
+											else // relative path
+											{
+												/* originally I thought the following was sufficient to distinguish between relative and
+												 * absolute, but then at sites like www.hdnumerique.com, I saw they specified their
+												 * favicon url as "imgs/favicon.ico" :)
+												 */
+												if (url.charAt(0) == '/') 
+													faviconURL = srcURL+url;
+												else
+													faviconURL = srcURL+'/'+url;
+											}
+
+											imgNode.setAttribute("alreadysearchedpage", "true");
 											imgNode.src = faviconURL;
 											drawFavicon(currIcon, imgNode);
+											imgNode.style.visibility = "visible";
 											GM_setValue(srcURL, faviconURL.toString());
 										}
 										else
 											GM_log("YQL query for "+srcURL+" returned with error " + response.status);
+
 									}
 							});
 						}
-				})(currIcon, imgNode, srcURL),
+				})(imgNode, srcURL, currIcon),
 				true);
 			drawFavicon(currIcon, imgNode);
 		}
 	}
-	
+
 	var regIconNodes = document.evaluate(REG_ICON_XPATH, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 	replaceIcons(regIconNodes, prefixIdx.reg);
-	
+
 	var folderIconNodes = document.evaluate(FOLDER_ICON_XPATH, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 	replaceIcons(folderIconNodes, prefixIdx.folder);
 }
@@ -166,10 +192,11 @@ function replaceAllFeedIcons(opml)
 //	here we draw the favicons when our script first loads
 fetchOPML(EXPORT_URL, replaceAllFeedIcons);
 
-/*  But there are 2 times when we will have to redraw the favicons:
+/*	But there are 3 times when we will have to redraw the favicons:
  *  
  *  1) When the user drag-and-drops feeds to re-order them
- *  2) When the user navigates to the Settings and back 
+ *  2) When the user navigates to the Settings and back
+ *  3) When the user adds a feed using the "Add a subscription" button
  *  
  *  This is because these two operations don't reload the page (I think Google is using AJAX for them).
  *  The current means of detecting when these events is fairly crude, but Google doesn't
@@ -177,10 +204,10 @@ fetchOPML(EXPORT_URL, replaceAllFeedIcons);
  */	
 
 //	I detect that drag-and-drop ends when the "Saved changes to [feed-name]" message appears
-var msg = document.evaluate("/html/body/div[4]/div/span[@id='message-area-inner']", document, null,
+var dndMsg = document.evaluate(DND_MSG_XPATH, document, null,
 				XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-	
-msg.addEventListener("DOMNodeInserted", 
+
+dndMsg.addEventListener("DOMNodeInserted",
 	function(event) 
 	{
 		if (this.textContent.search("Saved changes") == 0)
@@ -193,10 +220,10 @@ msg.addEventListener("DOMNodeInserted",
 			fetchOPML(EXPORT_URL, replaceAllFeedIcons);
 	},
 	true);
-	
+
 //	I detect when the user navigates back from the Settings page when the class attribute of the 
 //	left-hand side navigation bar is modified in a certain way
-var navBar = document.evaluate("/html/body/div[8]/div[@id='nav']", document, null, 
+var navBar = document.evaluate(NAV_BAR_XPATH, document, null,
 	XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
 var unhide = false;
@@ -204,10 +231,11 @@ var unhide = false;
 navBar.addEventListener("DOMAttrModified", 
 	function(event) 
 	{
+		//console.log("attrName = "+event.attrName+"\nprevValue = "+event.prevValue+"\nnewValue = "+event.newValue);
 		//	we're coming back from the Settings page 
 		if (event.attrName == "class" && event.prevValue == "hidden" && event.newValue == "")
 			unhide = true;
-			
+
 		/*	I only re-draw the first time the class attribute is changed after coming back from the
 		 *	Settings page.  I used the flag because this type of change to the class
 		 *	attribute occurs often.  For example, it occurs every time you click on a feed/subscription
@@ -219,4 +247,25 @@ navBar.addEventListener("DOMAttrModified",
 			unhide = false;
 		}
 	}, 
+	true);
+
+//	I detect when a new feed is added using the "Add a subscription" button when the class attribute
+//	of the "success" message becomes visible
+var feedAddMsg = document.evaluate(FEED_ADD_MSG_XPATH, document, null,
+	XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+feedAddMsg.addEventListener("DOMAttrModified",
+	function(event)
+	{
+		if (event.attrName == "class" && event.prevValue == "hidden" && event.newValue == "")
+		{
+			/*
+			 * I don't actually need to fetch the opml file here, but the replaceAllFeedIcons() function
+			 * makes calls to GM_getValue()/GM_setValue(), which cannot be made in the context of the
+			 * webpage (a security error occurs when this happens).  Thus, I have to call the function
+			 * in the context of a GreaseMonkey XmlHttpRequest.
+			 */
+			fetchOPML(EXPORT_URL, replaceAllFeedIcons);
+		}
+	},
 	true);

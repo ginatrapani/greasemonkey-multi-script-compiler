@@ -16,7 +16,7 @@
 //
 // --------------------------------------------------------------------
 // ==UserScript==
-// @name            Preview Item (Click button)
+// @name            Preview Item (Click button or headline, Ctrl+click to open in new tab)
 // @namespace       http://userscripts.org/scripts/show/12352
 // @description     Adds a "Preview button" that allows you to view actual article in a frame. Clicking again on that button goes back to RSS view. Does work both in List view and expanded view.
 // @include        htt*://www.google.*/reader/view*

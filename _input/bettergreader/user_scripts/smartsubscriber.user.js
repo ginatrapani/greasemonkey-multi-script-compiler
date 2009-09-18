@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Smart Subscribe
+// @name         Smart Subscriber (Parparita)
 // @namespace    http://browservulsel.blogspot.com/
 // @description  Two-click subscription to feeds encountered on any web page.
 
@@ -10,7 +10,7 @@
 // @exclude htt*://www.google.*/reader/view*
 // @versionorlastupdate May 06 2006
 // @tab Subscribing
-
+// @conflict smartsubscriber2
 // ==/UserScript==
 
 /*
