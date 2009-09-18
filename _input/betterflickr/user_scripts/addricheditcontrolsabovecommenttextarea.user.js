@@ -17,24 +17,30 @@
 // --------------------------------------------------------------------
 //
 // ==UserScript==
-// @name          Flickr Rich Edit
+// @name          Add Rich Edit Controls Above Comment Textarea (bold, italic, etc)
 // @description	  Adds a simple rich edit interface (Italic, Bold, Blockquote, Link) to any comment text area on flickr and any in-situ description editor.
 // @namespace     http://www.toddmoon.com/GreaseMonkey/
 // @include       http://*flickr.com/*
 // @exclude       http://*flickr.com/messages_write.gne*
 
 // @author Todd Moon and Jason Rhyley
-// @homepage http://www.flickr.com/groups/flickrhacks/discuss/72157600167344563/
+// @homepage http://userscripts.org/scripts/show/52904
 // @enabledbydefault true
+
+// @versionorlastupdate Jul 02 2009
+// @tab Comments
 // ==/UserScript==
 
 // == CONSTANTS == //
 
-var CONTROL_BAR_ITEM_COMMAND = {
-	ITALICIZE: 1,
-	EMBOLDEN: 2,
-	QUOTE: 3,
-	LINK: 4
+var COMMAND_FLAGS = {
+	ITALICS: 1,
+	BOLD: 2,
+	UNDERLINE: 4,
+	STRIKE: 8,
+	QUOTE: 16,
+	LINK: 32,
+	IMAGE: 64
 }
 
 // == LIFECYCLE == //
@@ -56,7 +62,16 @@ for ( var i = 0; i < textAreas.snapshotLength; i++)
 	// if this is not the extra special hidden textarea from the "invite to group" widget
 	if ( !textArea.style || !textArea.style.display || textArea.style.display.toLowerCase() != "none" )
 	{
-		var controlBar = new ControlBar( true, true, true, true );
+		var controlBar = new ControlBar( 
+			COMMAND_FLAGS.ITALICS |
+			COMMAND_FLAGS.BOLD |
+			COMMAND_FLAGS.UNDERLINE |
+			COMMAND_FLAGS.STRIKE |
+			COMMAND_FLAGS.QUOTE |
+			COMMAND_FLAGS.LINK |
+			COMMAND_FLAGS.IMAGE
+		);
+		
 		controlBar.inject( textArea );
 	}
 }
@@ -70,7 +85,14 @@ if ( unsafeWindow.global_photos && thisPageContainsYourPhotos( pathSegments ) )
 	{
 		var descriptionDiv = unsafeWindow.document.getElementById( "description_div" + photoID );
 	
-		var controlBarLoader = new DescriptionDivControlBarLoader( descriptionDiv, false );
+		var controlBarLoader = new DescriptionDivControlBarLoader( descriptionDiv, 
+			COMMAND_FLAGS.ITALICS |
+			COMMAND_FLAGS.BOLD |
+			COMMAND_FLAGS.UNDERLINE |
+			COMMAND_FLAGS.STRIKE |
+			COMMAND_FLAGS.LINK
+		);
+		
 		controlBarLoader.initialize();
 	}
 }
@@ -80,7 +102,14 @@ if ( unsafeWindow.page_set && isYourSet( pathSegments ) )
 {
 	var descriptionDiv = unsafeWindow.document.getElementById( "description_div" + unsafeWindow.page_set.id );
 	
-		var controlBarLoader = new DescriptionDivControlBarLoader( descriptionDiv, false );
+		var controlBarLoader = new DescriptionDivControlBarLoader( descriptionDiv, 
+			COMMAND_FLAGS.ITALICS |
+			COMMAND_FLAGS.BOLD |
+			COMMAND_FLAGS.UNDERLINE |
+			COMMAND_FLAGS.STRIKE |
+			COMMAND_FLAGS.LINK
+		);
+		
 		controlBarLoader.initialize();
 }
 
@@ -89,51 +118,116 @@ if ( unsafeWindow.page_collection_id && isYourCollection( pathSegments ) )
 {
 	var descriptionDiv = unsafeWindow.document.getElementById( "description_div" + unsafeWindow.page_collection_id );
 	
-		var controlBarLoader = new DescriptionDivControlBarLoader( descriptionDiv, true );
+		var controlBarLoader = new DescriptionDivControlBarLoader( descriptionDiv, 
+			COMMAND_FLAGS.ITALICS |
+			COMMAND_FLAGS.BOLD |
+			COMMAND_FLAGS.UNDERLINE |
+			COMMAND_FLAGS.STRIKE |
+			COMMAND_FLAGS.QUOTE |
+			COMMAND_FLAGS.LINK |
+			COMMAND_FLAGS.IMAGE
+		);
+		
 		controlBarLoader.initialize();
 }
 
 // == CLASSES == //
 
-function ControlBar( showItalic, showBold, showQuote, showLink )
+function ControlBar( commandFlags )
 {
-	this.showItalic = showItalic;
-	this.showBold = showBold;
-	this.showQuote = showQuote;
-	this.showLink = showLink;
-	
 	this.inject = function( targetTextArea )
 	{
 		var controlBar = document.createElement("div");
 		
-		controlBar.setAttribute('style','');
-		controlBar.style.marginBottom = "2px";
-		controlBar.style.fontSize = "12px";	
+		controlBar.setAttribute('style', 'margin: 2px 0px; font-size: 12px;');
 		
-		if ( showItalic )
+		if ( ( commandFlags & COMMAND_FLAGS.ITALICS ) == COMMAND_FLAGS.ITALICS )
 		{
-			var item = new ControlBarItem( "<i>italic</i> ", CONTROL_BAR_ITEM_COMMAND.ITALICIZE, targetTextArea );
+			var item = new ControlBarItem(
+				"<i>italic</i>",
+				function()
+				{
+					TagSelection( targetTextArea, "<i>", "</i>" );
+				}
+			);
 			
 			controlBar.appendChild( item.create() );
-		}			
-			
-		if ( showBold )
+		}	
+		
+		if ( ( commandFlags & COMMAND_FLAGS.BOLD ) == COMMAND_FLAGS.BOLD )
 		{
-			var item = new ControlBarItem( " <b>bold</b> ", CONTROL_BAR_ITEM_COMMAND.EMBOLDEN, targetTextArea );
+			var item = new ControlBarItem(
+				"<b>bold</b>",
+				function()
+				{
+					TagSelection( targetTextArea, "<b>", "</b>" );
+				}
+			);
+			
+			controlBar.appendChild( item.create() );
+		}	
+		
+		if ( ( commandFlags & COMMAND_FLAGS.UNDERLINE ) == COMMAND_FLAGS.UNDERLINE )
+		{
+			var item = new ControlBarItem(
+				"<u>underline</u>",
+				function()
+				{
+					TagSelection( targetTextArea, "<u>", "</u>" );
+				}
+			);
+			
+			controlBar.appendChild( item.create() );
+		}	
+		
+		if ( ( commandFlags & COMMAND_FLAGS.STRIKE ) == COMMAND_FLAGS.STRIKE )
+		{
+			var item = new ControlBarItem(
+				"<s>strike</s>",
+				function()
+				{
+					TagSelection( targetTextArea, "<s>", "</s>" );
+				}
+			);
 			
 			controlBar.appendChild( item.create() );
 		}
 		
-		if ( showQuote )
+		if ( ( commandFlags & COMMAND_FLAGS.QUOTE ) == COMMAND_FLAGS.QUOTE )
 		{
-			var item = new ControlBarItem( " quote ", CONTROL_BAR_ITEM_COMMAND.QUOTE, targetTextArea );
+			var item = new ControlBarItem(
+				"quote",
+				function()
+				{
+					TagSelection( targetTextArea, "<blockquote>", "</blockquote>" );
+				}
+			);
 			
 			controlBar.appendChild( item.create() );
 		}
 		
-		if ( showLink )
+		if ( ( commandFlags & COMMAND_FLAGS.LINK ) == COMMAND_FLAGS.LINK )
 		{
-			var item = new ControlBarItem( " link ", CONTROL_BAR_ITEM_COMMAND.LINK, targetTextArea );
+			var item = new ControlBarItem(
+				"link",
+				function()
+				{
+					LinkSelection( targetTextArea );
+				}
+			);
+			
+			controlBar.appendChild( item.create() );
+		}
+		
+		if ( ( commandFlags & COMMAND_FLAGS.IMAGE ) == COMMAND_FLAGS.IMAGE )
+		{
+			var item = new ControlBarItem(
+				"image",
+				function()
+				{
+					EmbedImage( targetTextArea );
+				}
+			);
 			
 			controlBar.appendChild( item.create() );
 		}
@@ -142,135 +236,119 @@ function ControlBar( showItalic, showBold, showQuote, showLink )
 	};
 }
 
-function ControlBarItem( label, editCommand, targetTextArea )
+function ControlBarItem( label, editFunction )
 {
-	this.label = label;
-	this.editCommand = editCommand;
-	this.targetTextArea = targetTextArea;
-	
 	this.create = function() 
 	{
 		var link = document.createElement("a");
 		
 		link.innerHTML = label;
 		link.href = "javascript:;";
-		link.style.marginRight = "18px;";
+		link.setAttribute('style','Margin-Right: 8px; text-decoration: none;');
 		
-		link.editCommand = this.editCommand;
-		link.targetTextArea = this.targetTextArea;
-		link.execute = this.execute;
-		link.linkSelection = this.linkSelection;
-		link.tagSelection = this.tagSelection;
+		link.execute = editFunction;
 		
 		addEvent( link, "click", "execute" );
 		
 		return link;	
 	}
-	
-	this.execute = function()
-	{
-		switch( this.editCommand )
-		{
-			case CONTROL_BAR_ITEM_COMMAND.ITALICIZE:
-				this.tagSelection( "<i>", "</i>" );
-				break;
-			case CONTROL_BAR_ITEM_COMMAND.EMBOLDEN:
-				this.tagSelection( "<b>", "</b>" );
-				break;
-			case CONTROL_BAR_ITEM_COMMAND.QUOTE:
-				this.tagSelection( "<blockquote>", "</blockquote>" );
-				break;
-			case CONTROL_BAR_ITEM_COMMAND.LINK:
-				this.linkSelection();
-				break;
-			default:
-				throw "Unknown command encountered";
-		}
-	}
-	
-	this.linkSelection = function()
-	{
-		var url = prompt( "Enter the URL:", "" );
-	
-		if ( url != null )
-		{
-			this.tagSelection( '<a href="' + url + '">', '</a>' );
-		}
-	}
-	
-	this.tagSelection = function( tagOpen, tagClose )
-	{	
-		if ( this.targetTextArea.selectionStart || this.targetTextArea.selectionStart == 0 ) //relies on this property.
-		{	
-			//record scroll top to restore it later.
-			var scrollTop = this.targetTextArea.scrollTop;
-				
-			// work around Mozilla Bug #190382
-			if ( this.targetTextArea.selectionEnd > this.targetTextArea.value.length )
-			{
-				this.targetTextArea.selectionEnd = this.targetTextArea.value.length;
-			}
-			
-			//We will restore the selection later, so record the current selection.
-			var selectionStart = this.targetTextArea.selectionStart;
-			var selectionEnd = this.targetTextArea.selectionEnd;
-			
-			this.targetTextArea.value = 
-				this.targetTextArea.value.substring( 0, selectionStart ) + //text leading up to the selection start
-				tagOpen + 
-				this.targetTextArea.value.substring( selectionStart, selectionEnd ) + //selected text
-				tagClose + 
-				this.targetTextArea.value.substring( selectionEnd ); //text after the selection end
-			
-			this.targetTextArea.selectionStart = selectionStart + tagOpen.length;
-			this.targetTextArea.selectionEnd = selectionEnd + tagOpen.length;
-			
-			this.targetTextArea.scrollTop = scrollTop;
-		}	
-	}
 }
 
-function DescriptionDivControlBarLoader( descriptionDiv, showBlockQuote )
+function DescriptionDivControlBarLoader( descriptionDiv, commandFlags )
 {
-	this.descriptionDiv = descriptionDiv;
-	
 	this.initialize = function()
 	{
-		if ( typeof( this.descriptionDiv.startEditing ) == 'function' )
+		if ( typeof( descriptionDiv.startEditing ) == 'function' )
 		{	
-			this.descriptionDiv.richEditStartEditing = this.descriptionDiv.startEditing; // richEditStartEditing needs to be a name unique to your script if you want to follow this pattern.
-			this.descriptionDiv.addControlBar = this.addControlBar;
+			//This may seem backwards. Why create a new pointer to the existing function, then create a new function that calls the new pointer?
+			//Wouldn't it be simpler to make a new "wrapper" function that simply calls the old one and set the onclick to the new function?
+			//Yes, but I want to make sure the onclick is still called "startEditing" so that other scripts can also extend it using this exact same pattern.
 			
-			this.descriptionDiv.startEditing = function() {
-				this.richEditStartEditing();
-				this.addControlBar();
+			//richEdit_OriginalStartEditing needs to be a name unique to your script if you want to follow this pattern.
+			descriptionDiv.richEdit_OriginalStartEditing = descriptionDiv.startEditing;
+			
+			descriptionDiv.addControlBar = function()
+			{
+				var nodes = document.evaluate(
+					"./div/form/textarea[@name='content']",
+					this.parentNode,
+					null,
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					null
+				);
+				
+				if ( nodes && nodes.snapshotLength > 0 )
+				{
+					var textArea = nodes.snapshotItem(0);
+					
+					var controlBar = new ControlBar( commandFlags );
+					controlBar.inject( textArea );
+				}
+			}
+			
+			descriptionDiv.startEditing = function() {
+				descriptionDiv.richEdit_OriginalStartEditing();
+				descriptionDiv.addControlBar();
 			};
 			
-			this.descriptionDiv.onclick = this.descriptionDiv.startEditing;
-		}
-	}
-	
-	this.addControlBar = function()
-	{
-		var nodes = document.evaluate(
-			"./div/form/textarea[@name='content']",
-			this.parentNode,
-			null,
-			XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-			null
-		);
-		
-		if ( nodes && nodes.snapshotLength > 0 )
-		{
-			var textArea = nodes.snapshotItem(0);
-			
-			var controlBar = new ControlBar( true, true, showBlockQuote, true );
-			controlBar.inject( textArea );
+			descriptionDiv.onclick = descriptionDiv.startEditing;
 		}
 	}
 }
 
 // == FUNCTIONS == //
+
+function TagSelection( targetTextArea, tagOpen, tagClose )
+{	
+	if ( targetTextArea.selectionStart || targetTextArea.selectionStart == 0 ) //relies on this property.
+	{	
+		//record scroll top to restore it later.
+		var scrollTop = targetTextArea.scrollTop;
+			
+		// work around Mozilla Bug #190382
+		if ( targetTextArea.selectionEnd > targetTextArea.value.length )
+		{
+			targetTextArea.selectionEnd = targetTextArea.value.length;
+		}
+		
+		//We will restore the selection later, so record the current selection.
+		var selectionStart = targetTextArea.selectionStart;
+		var selectionEnd = targetTextArea.selectionEnd;
+		
+		targetTextArea.value = 
+			targetTextArea.value.substring( 0, selectionStart ) + //text leading up to the selection start
+			tagOpen + 
+			targetTextArea.value.substring( selectionStart, selectionEnd ) + //selected text
+			tagClose + 
+			targetTextArea.value.substring( selectionEnd ); //text after the selection end
+		
+		targetTextArea.selectionStart = selectionStart + tagOpen.length;
+		targetTextArea.selectionEnd = selectionEnd + tagOpen.length;
+		
+		targetTextArea.scrollTop = scrollTop;
+	}	
+}
+
+function LinkSelection( targetTextArea )
+{
+	var url = prompt( "Enter the URL:", "" );
+
+	if ( url != null )
+	{
+		TagSelection( targetTextArea, '<a href="' + url + '">', '</a>' );
+	}
+}
+
+
+function EmbedImage( targetTextArea )
+{
+	var url = prompt( "Enter the image URL:", "" );
+
+	if ( url != null )
+	{
+		TagSelection( targetTextArea, '<img src="' + url + '"/>', '' );
+	}
+}
 
 function thisPageContainsYourPhotos( pathSegments )
 {

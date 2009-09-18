@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name          Flickr Photo Page Enhancer
+// @name          Enhance Photo Page with Links, Copy/Paste HTML, and Most-Used Tags
 // @description	  Adds links to different sizes directly to a Flickr photo page, generates html code to easily copy'n paste thumbnail & description, and automatically loads your 20 most used tags when you click "Add Tag."
 // @namespace     http://www.rhyley.org/gm/
 // @include       http://*flickr.com/photos/*
@@ -8,8 +8,10 @@
 // By Jason Rhyley (jason AT rhyley DOT org)
 
 // @author Jason Rhyley
-// @enabledbydefault true
+// @enabledbydefault false
 // @homepage http://userscripts.org/scripts/show/1030
+
+// @versionorlastupdate Apr 19 2007
 // ==/UserScript==
 
 (function() {

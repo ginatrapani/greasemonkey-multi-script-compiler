@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name          Flickr Thumbnails Enhancer
+// @name          Show Total Comments, Notes, Faves and Views on Set Thumbnails
 // @description	  Adds more information (comments, notes) to lists of thumbnails on Flickr
 // @namespace     http://www.rhyley.org/gm/
 // @include       http://*flickr.com/photos/*
@@ -13,8 +13,10 @@
 //       See http://urlgreyhot.com/personal/resources/mini_icons
 
 // @author Jason Rhyley
-// @enabledbydefault true
-// @homepage http://www.rhyley.org/posts/962/
+// @enabledbydefault false
+// @homepage http://www.rhyley.org/code/greasemonkey/
+
+// @versionorlastupdate Oct 01 2008
 // ==/UserScript==
 
 (function() {
@@ -36,6 +38,12 @@ doFavsOrSet = function() {
 }
 
 while (allDivs.snapshotLength==0) {
+
+	if (location.pathname.match('/friends')) {
+		allDivs = document.evaluate("//p[@class='RecentPhotos']",document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null);
+		break;
+	}
+
 	if (location.pathname.match('/tags')) {
 		allDivs = document.evaluate("//p[@class='UserTagList']",document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null);
 		break;
@@ -93,26 +101,48 @@ if (allDivs && allDivs.snapshotLength!=0) {
 
 	loadDeets = function(num){
 	   if (num<gmPhotos.length) {
+
+		var self = this;
+		var listener = {
+			flickr_photos_getInfo_onLoad: function(success, responseXML, responseText, params){
+				var rsp = responseText.replace(/<\?xml.*\?>/,'');
+				rsp = new XML(rsp);
+				gmPhotos[num].comments = rsp.photo.comments;
+				gmPhotos[num].notes = 0;
+				for each(i in rsp.photo.notes.note) {gmPhotos[num].notes += 1;}
+				gmPhotos[num].views = rsp.photo.@views;
+				loadFavs(num);
+			}
+		};
+		unsafeWindow.F.API.callMethod('flickr.photos.getInfo', {
+				photo_id: gmPhotos[num].id
+		}, listener);
 	   
-	   	GM_xmlhttpRequest({
-	   	    method: 'GET',
-	   	    url: 'http://www.flickr.com/services/rest/?method=flickr.photos.getInfo&photo_id=' + gmPhotos[num].id + '&secret=' + gmPhotos[num].secret + '&api_key=f11993eae97a85c2579a0ffa82adf265',
-	   	    headers: {
-	   	        'User-agent': 'Mozilla/4.0 (compatible) Greasemonkey',
-	   	        'Accept': 'application/atom+xml,application/xml,text/xml',
-	   	    },
-		    onload: function(responseDetails) {
-		    	doc = responseDetails.responseText;
-			gmPhotos[num].comments = doc.split('<comments>')[1].split('</comments>')[0];
-			gmPhotos[num].notes = doc.split('<note ').length - 1;
-			
-			doEnhance(num);
-			num++;
-			loadDeets(num);
-		    }
-		});
 	   }
 	}
+
+	loadFavs = function(num){
+	   if (num<gmPhotos.length) {
+
+		var self = this;
+		var listener = {
+			flickr_photos_getFavorites_onLoad: function(success, responseXML, responseText, params){
+				var rsp = responseText.replace(/<\?xml.*\?>/,'');
+				rsp = new XML(rsp);
+				gmPhotos[num].favs = rsp.photo.@total;
+				doEnhance(num);
+				num++;
+				loadDeets(num);
+			}
+		};
+		unsafeWindow.F.API.callMethod('flickr.photos.getFavorites', {
+				photo_id: gmPhotos[num].id,
+				page: '1',
+				per_page: '1'
+		}, listener);
+	   
+	   }
+	}	   
 
 	head = document.getElementsByTagName('head')[0];
 	if (!head) { return; }
@@ -130,6 +160,9 @@ if (allDivs && allDivs.snapshotLength!=0) {
 
 	comments_icon = '<img src="data:image/gif;base64,R0lGODlhCAAHAJEDAGdnZ97e3d7d3f///yH5BAEAAAMALAAAAAAIAAcAAAISHI4WsnsBIHuhToPO2GB7820FADs=" class="gm_icon" width="8" height="7" alt="comments">'
 	notes_icon = '<img src="data:image/gif;base64,R0lGODlhBwAJAKIFAGdnZ97d3d7e3fLy8mZmZv///wAAAAAAACH5BAEAAAUALAAAAAAHAAkAAAMcCARcRWEA+UYAcUXG7RAX9gmC4gXBIowpRyxAAgA7" class="gm_icon" width="7" height="9" alt="notes">'
+	favs_icon = '<img src="data:image/gif;base64,R0lGODlhCQAJAOMJAHh4eHh4eXl5eeTj4+Tk4+Tk5PT09PX09PX19f///////////////////////////yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAA8ALAAAAAAJAAkAAAQo8D0hH6gCUTBuOAMCEAMhBARCHARRCIARFqQ5ycjQYUZLVRMNEAOMAAA7" class="gm_icon" width="9" height="9" alt="faves">'
+	views_icon = '<img src="data:image/gif;base64,R0lGODlhDAAMAMIEAGdnZ97e3fLy8gAAAP///////////////yH5BAEKAAMALAAAAAAMAAwAAAMgOLrc8G2BQEGcQYhgGdacQ42dR5beM6FXGEnuO0AykwAAOw==" class="gm_icon" width="9" height="9" alt="views">'
+
 
 	doEnhance = function(thisOne) {
 	    thisDiv = allDivs.snapshotItem(thisOne);
@@ -147,6 +180,20 @@ if (allDivs && allDivs.snapshotLength!=0) {
 		out += thisOne.notes + notes_icon;
 		title += (title) ? ', ' : ' ';
 		title += (thisOne.notes!=0) ? thisOne.notes + ' notes' : thisOne.notes + ' note';
+		write++;
+	    }
+
+	    if (thisOne.favs!=0){
+		out += thisOne.favs + favs_icon;
+		title += (title) ? ', ' : ' ';
+		title += (thisOne.favs!=0) ? thisOne.favs + ' faves' : thisOne.favs + ' fave';
+		write++;
+	    }
+
+	    if (thisOne.views!=0){
+		out += thisOne.views + views_icon;
+		title += (title) ? ', ' : ' ';
+		title += (thisOne.views!=0) ? thisOne.views + ' views' : thisOne.views + ' view';
 		write++;
 	    }
 

@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name          Flickr More User Links
+// @name          Add Extra User Links (Popular, Scout, Fav'ed, etc)
 // @description	  Adds useful links to external services to the user sub-menu. Based on Browse by Interesting script by steeev and Scout Link by netomer.
 // @version	      0.5
 // @author        scragz
@@ -8,13 +8,15 @@
 // @include       http://flickr.com/photos/*
 
 // @homepage http://userscripts.org/scripts/show/21605
-// @enabledbydefault true
+// @enabledbydefault false
+
+// @versionorlastupdate Version 0.7, Dec 02 2008
 // ==/UserScript==
 
 /* begin configuration */
 var doShowPopularLink = true;
 var doShowScoutLink = true;
-var doShowLeechLink = true;
+var doShowLeechLink = false;
 var doShowYourFavsOfTheirs = true;
 var doShowTheirFavsOfYours = true;
 /* end configuration */
@@ -109,8 +111,9 @@ var getUsername = function()
     if (getIsItMe()) return getMyUsername();
     var header, headerMatch;
     if (header = _gt('h1')) {
-        headerMatch = /\s*(.*)'s photos.*/gi.exec(header[0].innerHTML);
-
+        // headerMatch = /\s*<a href="[^"]+">(.*)('s|') photos.*/gi.exec(header[0].innerHTML);
+        headerMatch = /\s*(.*)('s|') photos.*/gi.exec(header[0].innerHTML);
+        // GM_log(headerMatch);
         if (headerMatch) {
             username = headerMatch[1];
             return username;
@@ -151,7 +154,7 @@ var getIsItMe = function()
 var subMenu = false; // fake static
 var appendSubMenuLink = function(label, href, nosep)
 {
-    if (!subMenu) subMenu = xpathFirst("//table[@id='SubNav']//p[@class='Links']");
+    if (!subMenu) subMenu = xpathFirst("//table[@id='SubNav']//p[@class='LinksNewP']//span[@class='LinksNew']");
     if (!subMenu) return false;
 
     if (typeof href == 'function') {
@@ -164,7 +167,11 @@ var appendSubMenuLink = function(label, href, nosep)
         link.href = href;
         link.innerHTML = label;
     }
-
+    
+    span = _ce('span');
+    span.appendChild(link)
+    
+    /*
     if (!nosep) {
         img = _ce('img');
         img.src = '/images/subnavi_dots.gif';
@@ -174,16 +181,17 @@ var appendSubMenuLink = function(label, href, nosep)
 
         subMenu.appendChild(img);
     }
-
-    subMenu.appendChild(link);
+    */
+    
+    subMenu.appendChild(span);
 }
 
 var appendSubMenuNewline = function()
 {
-    if (!subMenu) subMenu = xpathFirst("//table[@id='SubNav']//p[@class='Links']");
+    if (!subMenu) subMenu = xpathFirst("//table[@id='SubNav']//p[@class='LinksNewP']//span[@class='LinksNew']");
     if (!subMenu) return false;
 
-    subMenu.appendChild(_ce('br'));
+    // subMenu.appendChild(_ce('br'));
 }
 
 var go = function()
@@ -196,9 +204,16 @@ var go = function()
     if (!_gi('SubNav')) return;
 
     if (getUserId()) {
-        if (doShowPopularLink && !getIsItMe()) appendSubMenuLink('Popular', 'http://interestingby.isaias.com.mx/pm.php?id=' + getUserId() + '&theme=white');
-        if (doShowScoutLink) appendSubMenuLink('Scout', 'http://flagrantdisregard.com/flickr/scout.php?username=' + getUserId() + '&sort=date&year=0');
-        if (doShowLeechLink) appendSubMenuLink('Leech', 'http://www.flickrleech.net/nsid/' + getUserId());
+        GM_log("doShowYourFavsOfTheirs: "+doShowYourFavsOfTheirs);
+        GM_log("doShowTheirFavsOfYours: "+doShowTheirFavsOfYours);
+        GM_log("getIsItMe(): "+getIsItMe());
+        GM_log("getMyUsername(): "+getMyUsername());
+        GM_log("getUsername(): "+getUsername());
+        appendSubMenuNewline();
+        //if (doShowPopularLink && !getIsItMe()) appendSubMenuLink('Popular', 'http://interestingby.isaias.com.mx/pm.php?id=' + getUserId() + '&theme=white', true);
+        if (doShowPopularLink && !getIsItMe()) appendSubMenuLink('Popular', 'http://fiveprime.org/hivemind/User/' + getUsername() + '/Interesting', true);
+        if (doShowScoutLink) appendSubMenuLink('Scout', 'http://flagrantdisregard.com/flickr/scout.php?username=' + getUserId() + '&sort=date&year=0', !(doShowPopularLink && !getIsItMe()));
+        if (doShowLeechLink) appendSubMenuLink('Leech', 'http://www.flickrleech.net/nsid/' + getUserId(), !doShowScoutLink);
         if (!getIsItMe() && (doShowYourFavsOfTheirs || doShowTheirFavsOfYours)) appendSubMenuNewline();
         if (doShowYourFavsOfTheirs && !getIsItMe() && getMyUsername() && getUsername()) appendSubMenuLink(getUsername() + '\'s&nbsp;Fav\'d&nbsp;by&nbsp;You', 'http://flagrantdisregard.com/flickr/favorites.php?user1=' + getUserId() + '&user2=' + getMyUsername() + '&button=Go', true);
         if (doShowTheirFavsOfYours && !getIsItMe() && getMyUsername() && getUsername()) appendSubMenuLink('Yours&nbsp;Fav\'d&nbsp;by&nbsp;' + getUsername(), 'http://flagrantdisregard.com/flickr/favorites.php?user1=' + getMyUsername() + '&user2=' + getUserId() + '&button=Go', !doShowYourFavsOfTheirs);

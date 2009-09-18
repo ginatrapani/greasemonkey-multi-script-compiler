@@ -4,9 +4,9 @@
 // http://www.gnu.org/copyleft/gpl.html
 //
 // ==UserScript==
-// @name	Flickr Photo Magnifier
+// @name	Add "Instant Zoom" Magnifier Button Above Photos
 // @namespace	http://6v8.gamboni.org/Flickr-Photo-Magnifier.html
-// @description Add a magnifier to the photo pages. Click+mouse drag will zoom in and out. You can configure the quality of the image through the greasemonkey user script menu. (magnifier code by Janos Pal Toth).
+// @description Add a "Instant Zoom" magnifier to the photo pages. Click+mouse drag will zoom in and out. (Magnifier code by Janos Pal Toth).
 // @version        1.4
 // @date           2008-03-30
 // @creator        Pierre Andrews (mortimer.pa@free.fr)
@@ -17,6 +17,8 @@
 // @author Pierre Andrews (mortimer.pa@free.fr)
 // @homepage http://6v8.gamboni.org/Flickr-Photo-Magnifier.html
 // @enabledbydefault true
+
+// @versionorlastupdate Version 1.4, Mar 30 2008
 // ==/UserScript==
 
 

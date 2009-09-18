@@ -1,13 +1,17 @@
 // ==UserScript==
-// @name          Flickr Buddy Icon Reply
+// @name          Add Buddy Icon Reply Options
 // @description	  Add a reply link to each comment which will generate the buddy icon code or bold username code in the add comment textarea on flickr.
 // @namespace     http://www.flickr.com/photos/doc18/
 // @include       http://*flickr.com/*
 // @exclude       http://*flickr.com/messages_write.gne*
 
-// @author doc18
+// @author doc18 and Eric Martin
 // @enabledbydefault true
-// @homepage http://www.flickr.com/groups/flickrhacks/discuss/72157594482547285/
+// @homepage http://www.bobochu.com/files/greasemonkey/flickrbuddyiconreply3_5.user.js
+// @versionorlastupdate Version 3.3
+
+// @tab Comments
+
 // ==/UserScript==
 
 (function() {
@@ -44,6 +48,13 @@
 			tagIt('<b>'+ username +'</b> ','', i);
 		}
 	}
+        
+        function bothItAuto (username, imgSRC, i) {
+            if (username != null && imgSRC != null) {
+                tagIt('<img src="' + imgSRC + '" height="24" width="24"> <b>'+ username +'</b> ','', i);
+            }
+                
+        }
 
 	//FlickrLocalisation, script to help localise user script for Flickr
 	//version 0.2
@@ -129,20 +140,34 @@
 
 	var localiser = new FlickrLocaliser({
 			'en-us' : {
-				'name_reply' : 'name reply',
-				'icon_reply' : 'icon reply'
+				'reply with': 'reply with',
+				'name' : 'name',
+				'icon' : 'icon',
+				'icon&name': 'icon&name'
 			},
 			'fr-fr' : {
-				'name_reply' : 'r&eacute;pondre avec le nom',
-				'icon_reply' : 'r&eacute;pondre avec l\'icone'
+				'reply with': 'repondre avec',
+				'name' : 'nom',
+				'icon' : 'icone',
+				'icon&name': 'icone&nom'
 			},
 			'pt-br' : {
-				'name_reply' : 'responder com o nome',
-				'icon_reply' : 'responder com o &iacute;cone'
+				'reply with': 'responder com',
+				'name' : 'nome',
+				'icon' : 'icone',
+				'icon&name': 'icone&nome'
 			},
 			'it-it' : {
-				'name_reply' : 'rispondere con il nome',
-				'icon_reply' : 'rispondere con l\'icone'
+				'reply with': 'rispondere con',
+				'name' : 'nome',
+				'icon' : 'icone',
+				'icon&name': 'icone&nome'
+			},
+			'es-us' : {
+				'reply with': 'responder con',
+				'name' : 'nombre',
+				'icon' : '&iacute;cono',
+				'icon&name': '&iacute;cono y nombre'
 			},
 			defaultLang: 'en-us'
 		});
@@ -157,12 +182,19 @@
 	}
 
 	comments = document.evaluate("//td[@class='Who']",document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null);
+	var el = 'td';
+	if (comments.snapshotLength == 0) {
+		comments = document.evaluate("//div[contains(@class,'Who')]",document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null),
+			el = 'div';
+	}
+
 	for (i=0; i< comments.snapshotLength; i++) {
 		var who = comments.snapshotItem(i);
 		var imgSrc = who.getElementsByTagName('img')[0].src;
 
-		var said = who.parentNode.getElementsByTagName('td')[1];
-
+		var said = who.parentNode.getElementsByTagName(el)[1];
+		var small = said.getElementsByTagName('small')[0];
+		var permalink = small.getElementsByTagName('a')[0];
 		var h4 = said.getElementsByTagName('h4')[0];
 		if (h4 && h4.getElementsByTagName('a').length > 0) {
 			var username = h4.getElementsByTagName('a')[0].textContent;
@@ -170,20 +202,28 @@
 				//admin username
 				username = h4.getElementsByTagName('a')[1].textContent;	
 			}
-
-			var nameA = h4.appendChild(document.createElement('a'));
+			small.insertBefore(document.createTextNode(localiser.localise('reply with') + ' '),permalink);
+			var nameA = small.insertBefore(document.createElement('a'),permalink);
 			nameA.href='javascript:;';
-			nameA.innerHTML = localiser.localise('name_reply');
-			nameA.addEventListener('click',
-								   (function(a,b) { return function(){usernameItAuto(a,b)};})(username,messageIndex),false);
-
-			if (imgSrc.indexOf('http://www.flickr.com/images/buddyicon.jpg') == -1) {
-				h4.appendChild(document.createTextNode(', '));
-				var iconA = h4.appendChild(document.createElement('a'));
+			nameA.innerHTML = localiser.localise('name');
+			nameA.className = 'Plain';
+			nameA.addEventListener('click', (function(a,b) { return function(){usernameItAuto(a,b)};})(username,messageIndex),false);
+			if (imgSrc.indexOf('http://l.yimg.com/g/images/buddyicon.jpg') == -1) {
+				small.insertBefore(document.createTextNode(' / '),permalink);
+				var iconA = small.insertBefore(document.createElement('a'),permalink);
 				iconA.href='javascript:;';
-				iconA.innerHTML = localiser.localise('icon_reply');
+				iconA.innerHTML = localiser.localise('icon');
+				iconA.className = 'Plain';
 				iconA.addEventListener('click',(function(a,b) {return function() {imgItAuto(a,b)};})(imgSrc,messageIndex),false);
+				small.insertBefore(document.createTextNode(' / '),permalink);
+                                
+				var mix = small.insertBefore(document.createElement('a'),permalink);
+				mix.href='javascript:;';
+				mix.innerHTML = localiser.localise('icon&name');
+				mix.className = 'Plain';
+				mix.addEventListener('click',(function(a,b,c) {return function() {bothItAuto(a,b,c)};})(username,imgSrc,messageIndex),false);
 			}
+			small.insertBefore(document.createTextNode(' | '),permalink);
 		}	
 	}
-})()
+})();
