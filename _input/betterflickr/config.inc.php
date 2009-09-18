@@ -4,7 +4,7 @@ $GMSC =  array(
 
 'name'=>"Better Flickr",
 
-'description'=>"Enhances Flickr with a compilation of useful features. All user scripts and styles copyright their original authors. Click on the script homepage in the Help tab for more information.",
+'description'=>"Enhances Flickr with a compilation of user scripts and styles. All scripts copyright their original authors. Click on the script homepage in the Help tab for more information.",
 
 'creator'=>"Gina Trapani (All user scripts copyright their original authors)",
 
