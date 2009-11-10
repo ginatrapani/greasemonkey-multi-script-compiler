@@ -28,6 +28,8 @@
 // @author Mark Pilgrim
 // @homepage http://diveintomark.org/projects/greasemonkey/
 // @enabledbydefault true
+
+// @versionorlastupdate Jun 28 2005
 // ==/UserScript==
 
 /* BEGIN LICENSE BLOCK
