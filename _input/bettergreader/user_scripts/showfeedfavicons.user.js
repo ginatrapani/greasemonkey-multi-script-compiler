@@ -6,7 +6,7 @@
 // @description Displays site favicons for each feed inside Reader.
 // @homepage  http://userscripts.org/scripts/show/54805
 // @enabledbydefault true
-// @versionorlastupdate Aug 15 2009
+// @versionorlastupdate Oct 23 2009
 // @tab  General
 // ==/UserScript==
 
@@ -25,17 +25,16 @@
  * 1) If there is a stored favicon URL, use it.  Otherwise try "favicon.ico" in the feed's root directory.
  * 2) if it isn't there, then use YQL to search the webpage.
  */
-
 const EXPORT_URL = '/reader/subscriptions/export';
-const REG_ICON_XPATH = "/html/body/div[8]/div/div[4]/div[4]/ul/li/ul/li/a/span[starts-with(@class,'icon sub-icon')]";
-const FOLDER_ICON_XPATH = "/html/body/div[8]/div/div[4]/div[4]/ul/li/ul/li/ul/li/a/span[starts-with(@class,'icon sub-icon')]";
-const ICON_XPATH_PREFIX = ["/opml/body/outline[@xmlUrl='", "/opml/body/outline/outline[@xmlUrl='"];
+const REG_ICON_XPATH = "/html/body/div[8]/div/div[5]/div[4]/ul/li/ul/li/a/span[starts-with(@class,'icon sub-icon')]";
+const FOLDER_ICON_XPATH = "/html/body/div[8]/div/div[5]/div[4]/ul/li/ul/li/ul/li/a/span[starts-with(@class,'icon sub-icon')]";
+const ICON_XPATH_PREFIX = ['/opml/body/outline[@text="', '/opml/body/outline/outline[@text="'];
+const ICON_OPML_XPATH_PREFIX = ['/opml/body/outline', '/opml/body/outline/outline'];
 var prefixIdx = {reg:0, folder:1};
 const YQL_BASE_URL = 'http://query.yahooapis.com/v1/public/yql?q=';
 const YQL_GET_HTML = 'select%20*%20from%20html%20where';	// URI-encoded
 const YQL_HTML_QUERY = YQL_BASE_URL+YQL_GET_HTML;
 const FAVICON_XPATH = "/html/head/link[@rel='icon'] | /html/head/link[@rel='ICON'] | /html/head/link[@rel='shortcut icon'] | /html/head/link[@rel='SHORTCUT ICON']";
-
 const URL_PATTERN = "^http://"; // "http://" at the start of the string
 const DND_MSG_XPATH = "/html/body/div[4]/div/span[@id='message-area-inner']";
 const NAV_BAR_XPATH = "/html/body/div[8]/div[@id='nav']";
@@ -63,12 +62,67 @@ function replaceAllFeedIcons(opml)
 	{
 		for (var i=0; i<iconNodes.snapshotLength; i++)
 		{
+			/* I need to match the icon node with its XML element in the OPML file.
+			 * I'm going to match based on the title.
+			 */
 			var currIcon = iconNodes.snapshotItem(i);
-			var feedURL = unescape(currIcon.parentNode.href.split('/reader/view/feed/')[1]);
-			var srcURL = opml.evaluate(ICON_XPATH_PREFIX[type]+feedURL+"']/@htmlUrl", opml, null,
-				XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.textContent;
+
+			//	There is a seemingly easier way to get the title (i.e., that doesn't require the call to replace()
+			//	below) by using currIcon.nextSibling.firstChild.textContent to directly get the title.  However,
+			//	I've discovered that value can get truncated with "..." by Google Reader if the title is too long.
+			//	The following method seems to be free of this limitation.
+			var feedTitle = currIcon.nextSibling.getAttribute("title");
+
+			// be careful when using regex in replace() - wrap the regex with //'s not ""'s !!
+			// The regex below matches the following sequence:
+			//		1 or more whitespaces, 1 '(', 1 or more digits and 1 ')', all at the end of the string
+			// The call to replace() strips this sequence from the end of the string.
+			feedTitle = feedTitle.replace(/\s+\(\d+\)$/,"")
+
+			var srcURLNode, srcURL;
+
+			if (feedTitle.indexOf("\"") == -1)	//	common case - title doesn't contain double quotes
+			{
+				srcURLNode = opml.evaluate(ICON_XPATH_PREFIX[type]+feedTitle+'"]/@htmlUrl', opml, null,
+					XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+
+				if (srcURLNode == null)	//	shouldn't ever (or at least rarely) happen
+				{
+					GM_log("Unable to get the srcURLNode for feed "+feedTitle);
+					continue;
+				}
+
+				srcURL = srcURLNode.textContent;
+			}
+			else	//	going to be expensive
+			{
+				var iconOPMLNodes = opml.evaluate(ICON_OPML_XPATH_PREFIX[type], opml, null,
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+
+				/* Unfortunately, XPath 1.0 doesn't allow for escaping single quotes (') and double quotes (").
+				 * Therefore, I'm treating the "text" attribute as a string, and doing the comparison this way.
+				 * XPath 2.0, whenever that gets widely supported, should render this method obsolete.
+				 */
+				for (var j=0; j<iconOPMLNodes.snapshotLength; j++)
+				{
+					currNode = iconOPMLNodes.snapshotItem(j);
+					if (currNode.getAttribute("text") == feedTitle)
+					{
+						srcURL = currNode.getAttribute("htmlUrl");
+						break;
+					}
+				}
+
+				if (j == iconOPMLNodes.snapshotLength)
+				{
+					GM_log("Unable to get the srcURLNode for feed "+feedTitle);
+					continue;
+				}
+			}
+
 			srcURL = "http://"+srcURL.split("/", 3)[2];	// get the root URL
 
+			/* create the img node used to display our icon */
 			var imgNode = document.createElement("img");
 			imgNode.style.borderWidth = "0px";
 			/* By setting the class attribute to be the same, we can ensure that the same CSS styles get applied.
@@ -79,10 +133,10 @@ function replaceAllFeedIcons(opml)
 			imgNode.style.visibility = "hidden";
 			imgNode.setAttribute("alreadysearchedpage", "false");
 
-			var defaultFaviconURL;	// our first guess at the correct URL
+			var defaultFaviconURL;	// contains our first guess at the correct URL
 			var faviconURL = GM_getValue(srcURL);
 
-			if (faviconURL == undefined || faviconURL == "")
+			if (faviconURL == undefined || faviconURL == "")	//	no user-specified value
 				defaultFaviconURL = srcURL + "/favicon.ico";
 			else
 				defaultFaviconURL = faviconURL;
@@ -122,7 +176,7 @@ function replaceAllFeedIcons(opml)
 								onload:
 									function(response)
 									{
-										if (response.status == '200')
+										if (response.status == '200')	//	response is OK
 										{
 											// remove XML opening declaration before passing to constructor (apparently required)
 											var urlResultDoc = new XML(response.responseText.replace(/^<\?xml [^>]*>\s*/,''));
@@ -182,6 +236,7 @@ function replaceAllFeedIcons(opml)
 		}
 	}
 
+	/* The feeds are located at different places in the DOM depending on whether its in a folder */
 	var regIconNodes = document.evaluate(REG_ICON_XPATH, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 	replaceIcons(regIconNodes, prefixIdx.reg);
 
@@ -231,7 +286,8 @@ var unhide = false;
 navBar.addEventListener("DOMAttrModified", 
 	function(event) 
 	{
-		//console.log("attrName = "+event.attrName+"\nprevValue = "+event.prevValue+"\nnewValue = "+event.newValue);
+//		if (event.attrName == "class")
+//			console.log("attrName = "+event.attrName+"\nprevValue = "+event.prevValue+"\nnewValue = "+event.newValue);
 		//	we're coming back from the Settings page 
 		if (event.attrName == "class" && event.prevValue == "hidden" && event.newValue == "")
 			unhide = true;

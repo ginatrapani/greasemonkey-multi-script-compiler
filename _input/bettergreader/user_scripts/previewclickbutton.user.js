@@ -1,8 +1,6 @@
-
 // Google Reader Preview Enhanced
-// version 1.07g
-// 2008-04-12
-// Copyright (c) 2007-2008, Julien CAROSI (jcarosi@gmail.com)
+// version 1.07g-bryantsai
+// Copyright (c) 2009, Bryan Tsai
 // Released under the GPL license
 // http://www.gnu.org/copyleft/gpl.html
 //
@@ -20,12 +18,11 @@
 // @namespace       http://userscripts.org/scripts/show/12352
 // @description     Adds a "Preview button" that allows you to view actual article in a frame. Clicking again on that button goes back to RSS view. Does work both in List view and expanded view.
 // @include        htt*://www.google.*/reader/view*
-
 // @author Julien CAROSI and bryantsai
 // @homepage http://userscripts.org/scripts/show/12352
 // @enabledbydefault true
 // @conflict previewautomatically
-// @versionorlastupdate  Jan 16 2009
+// @versionorlastupdate  Oct 25 2009
 // @tab General
 // ==/UserScript==
 //
@@ -37,6 +34,7 @@
 //
 // --------------------------------------------------------------------
 // Changelog :
+//        : Changed to use google.tld instead, as pihentagy suggested.
 // v1.07g : Fixed scrolling to top of article and Shift-V shortcut to open preview.
 //               Now doesn't rely on Google's code at all. So scrolling to top of article and Shift-V will still work even if Google's code changes.
 // v1.07f : fixes a bug introduced by v1.07e
@@ -46,7 +44,7 @@
 //          added support for https urls
 // v1.07b : makes scrolling to top of article work again because google's code was changed. Same for shortcut
 // v1.07a : makes the script work again because google's code was changed.
-//          added a try/catch statement in order to make cccthe script work even if the code changes again, though not scrolling to the top of article
+//          added a try/catch statement in order to make the script work even if the code changes again, though not scrolling to the top of article
 //          so people can still use the script until an upgrade is released
 // v1.07  : allows clicking on an article's title to show the preview, so you don't need to scroll it down to preview it (was opening the article in a new window previously, now not needed with preview functionnality)
 // v1.06a : fixes compatibility with "find as you type" firefox functionality
@@ -57,6 +55,7 @@
 // --------------------------------------------------------------------
 // Tested on Firefox 1.5 and 2.0
 // --------------------------------------------------------------------
+
 function getFirstElementMatchingClassName(root,tag,class)
 {
   var elements=root.getElementsByTagName(tag); var i=0;

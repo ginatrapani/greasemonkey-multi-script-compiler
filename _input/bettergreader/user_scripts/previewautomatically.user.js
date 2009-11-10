@@ -13,10 +13,10 @@
 // @description     Replaces Google Reader's article summary with a frame containing the actual blog's web page.
 // @include         htt*://www.google.*/reader/view*
 
-// @author Itai Lahan
+// @author Itai Lahan, modified by Gina Trapani
 // @enabledbydefault false
 // @homepage http://www.userscripts.org/scripts/show/6412
-// @versionorlastupdate Nov 16 2006
+// @versionorlastupdate Nov 10 2009
 // @conflict previewclickbutton
 // @tab  General
 // ==/UserScript==
@@ -59,7 +59,8 @@ var decorate_new_elements = function(e) {
 	elements = document.getElementsByClassName("entry-body", element);
 	if (elements != undefined && (elements.length > 0)) {
 		var body = elements[0];
-		body.innerHTML = "<IFRAME src='"+href+"' height=500 width=1000></IFrame>";
+		body.innerHTML = "<IFRAME src='"+href+"' height=500 width=100%></IFrame>";
+		body.setAttribute('style','max-width: 98%');
 	}
 }
 

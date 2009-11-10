@@ -10,7 +10,7 @@
 // @homepage http://groups.google.com/group/better-gmail-2-firefox-extension
 // @enabledbydefault false
 
-// @versionorlastupdate Sept 17 2009
+// @versionorlastupdate Nov 10 2009
 // ==/UserScript==
 
 
@@ -44,13 +44,12 @@ function getDomain(href) {
 	var asin = '';
 	for (i = 0; i < allLinks.length; i++) {
 		var href = allLinks[i].href;
-		if (href.match(/amazon\./i) && !href.match(/betteraddons/i) && !href.match(/palitoy/i)) {
+		if (href.match(/amazon\./i) && !href.match(/tag/i) && !href.match(/nosim/i) && !href.match(/betteraddons/i) && !href.match(/palitoy/i)) {
 			asin = getASIN(href);
 			if (asin != null) {
 				domain = getDomain(href);
-				//alert("Better GReader: Amazon link "+allLinks[i].href);
 				if ( domain.match(/amazon\./i) ) {
-					allLinks[i].setAttribute("href", "http://" + domain + "/o/ASIN/" + asin + "/ref=nosim/"+associateID);
+					allLinks[i].setAttribute("href", "http://" + domain + "/o/ASIN/" + asin + "?tag="+associateID);
 				 }	
 			}
 		}
