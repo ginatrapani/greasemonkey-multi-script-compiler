@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Add Row Highlights
 // @namespace     http://userstyles.org
-// @description	  Highlights the letter rows in the new Gmail when you hover over them with the mouse cursor
+// @description	  Highlights the letter rows in the new Gmail when you hover over them with the mouse cursor.
 // @author        stasnikiforov
 // @homepage      http://userstyles.org/styles/4725
 // @include       http://mail.google.com/*

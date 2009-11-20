@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name           Show Unread Message Count on Favicon (Bogs)
 // @description    Shows the number of unread Gmail messages in the favicon in your Firefox tab.
-// @version        1.02
-// @date           2000-04-09
+// @version        1.04
+// @date           2009-11-18
 // @author         Eric Bogs
 // @namespace      http://bo.gs
 
@@ -12,7 +12,7 @@
 // @enabledbydefault false
 // @homepage http://userscripts.org/scripts/show/39432
 // @conflict showunreadmessagecountonfaviconwooley
-// @versionorlastupdate Apr 9 2009
+// @versionorlastupdate Nov 18 2009
 // ==/UserScript==
 
 // By default, Gmail email accounts get a red icon, and hosted (Google Apps For
@@ -25,12 +25,25 @@ var greenIconDomain = '';
 // if your Firefox browsing becomes sluggish.
 var pollDurationMS = 500;
 
+if (!GM_xmlhttpRequest) {
+  alert('Please upgrade to the latest version of Greasemonkey.');
+}
 
 function GmailFavIconUnreadCount(gmail) {
+  this.inboxSpan_ = null;
   this.getInboxSpan_ = function() {
     // Better than DOM traversal/XPath, but still can break if Gmail DOM structure
     // changes significantly.
-    return gmail.getNavPaneElement().getElementsByTagName('a')[0];
+    
+    // Around 2009-11-16, the GMail API hook for the line below broke.
+    // return gmail.getNavPaneElement().getElementsByTagName('a')[0];
+    if (!this.inboxSpan_) {
+      var frame = top.document.getElementById('canvas_frame') 
+      if (frame) {
+        this.inboxSpan_ = frame.contentWindow.document.getElementById(':r3').getElementsByTagName('a')[0];
+      }
+    }
+    return this.inboxSpan_;
   }
   
   this.poll_ = function() {
@@ -58,7 +71,7 @@ function GmailFavIconUnreadCount(gmail) {
   // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20+, 50+, 99+,
   // all with blue evelope backgrounds, and then the same with red, green, orange envelope 
   // backgrounds.  For non-Greasemonkey implementations, the images below should be 
-  // minified/inline-gzipped.  Thanks to Jason  Kottke for his Silkscreen 
+  // minified/inline-gzipped.  Thanks to Jason Kottke for his Silkscreen 
   // font: http://kottke.org/plus/type/silkscreen
   this.blueOffset_ = 0;  this.greenOffset_ = 23;  this.orangeOffset_ = 46;  this.redOffset_ = 69;
   this.icons_ = ['data:application/octet-stream;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAABMLAAATCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqcAJYanAD/GpwA/xqcAJYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqcAJYanAD///////////8anAD/GpwAlgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAanAD//////xqcAP8anAD//////xqcAP/aUzj/2lM4//m0p//5tKf/+bSn//m0p//5tKf/+bSn//m0p//5tKf/GpwA//////8anAD/GpwA//////8anAD/2lM4/9pTOP//5+L//////////////////////////////////////xqcAP//////GpwA/xqcAP//////GpwA/9pTOP/aUzj/+bSn///n4v////////////////////////////////94xWn/GpwA////////////GpwA/2l+F//aUzj/2lM4///n4v/5tKf//+fi////////////8pSB//KUgf///////////3i7Xf8anAD/GpwA/2l+F//aUzj/2lM4/9pTOP///////+fi//m0p///wrb/8pSB/+lxWv/pcVr/8pSB///Ctv/5tKf//+fi///////aUzj/2lM4/9pTOP/aUzj/////////////wrb/8pSB/+lxWv/aUzj/2lM4/+lxWv/ylIH//8K2////////////2lM4/9pTOP/aUzj/2lM4////////////8pSB/+lxWv/aUzj//8K2///Ctv/aUzj/6XFa//KUgf///////////9pTOP/aUzj/2lM4/9pTOP//////8pSB/+lxWv/aUzj//8K2/////////////8K2/9pTOP/pcVr/8pSB///////aUzj/2lM4/9pTOP/aUzj/8pSB/+lxWv/aUzj//8K2////////////////////////wrb/2lM4/+lxWv/ylIH/2lM4/9pTOP/aUzj/2lM4/9pTOP/aUzj//8K2///////////////////////////////////Ctv/aUzj/2lM4/9pTOP/aUzj/2lM4/9pTOP/aUzj/8pSB//m0p//5tKf/+bSn//m0p//5tKf/+bSn//m0p//5tKf/8pSB/9pTOP/aUzj/2lM4/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+FYyf/A38D/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAA==',
@@ -240,9 +253,3 @@ window.addEventListener('load', function() {
       });
     }
   }, true);
-  
-  
-  
-  
-  
-  

@@ -14,7 +14,7 @@
 
 
 // @homepage http://userscripts.org/scripts/show/24430
-// @versionorlastupdate Aug 07 2009
+// @versionorlastupdate Nov 17 2009
 // @tab General
 // @enabledbydefault false
 
@@ -270,11 +270,14 @@ function GmailFavIconAlerts(gmail) {
 	this.getSearchElement = function() {
 		var element;
 
-		var nav = gmail.getNavPaneElement();
-		
+		//var nav = gmail.getNavPaneElement();
+		var frame = top.document.getElementById('canvas_frame')
+		if(frame) {
+			var nav = frame.contentWindow.document.getElementsByClassName('n0');
+		}
 		if(nav) {
-			var potential = nav.getElementsByTagName('a')[0];
-			
+			//var potential = nav.getElementsByTagName('a')[0];
+			var potential = nav[0];
 			if(potential.className.indexOf('n0') !== -1) {
 				element = potential;
 			}
@@ -310,17 +313,17 @@ function GmailFavIconAlerts(gmail) {
 	}
 	
 	this.poll = function() {
-			if(!self.searchElement)
-				return self.searchElement = self.getSearchElement();
+		if(!self.searchElement)
+			return self.searchElement = self.getSearchElement();
+		
+		if(self.getChat() && self.newChat()) {
+			return self.setIcon(self.icons.chat);
+		}
 			
-			if(self.getChat() && self.newChat()) {
-				return self.setIcon(self.icons.chat);
-			}
-				
-			if(self.newMail())
-				self.setIcon(self.getUnreadCountIcon());
-			else
-				self.setIcon(self.icons.read);
+		if(self.newMail())
+			self.setIcon(self.getUnreadCountIcon());
+		else
+			self.setIcon(self.icons.read);
 	}
 	
 	this.setIcon = function(icon) {
