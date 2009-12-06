@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name           Show Unread Message Count on Favicon (Bogs)
 // @description    Shows the number of unread Gmail messages in the favicon in your Firefox tab.
-// @version        1.04
-// @date           2009-11-18
+// @version        1.05
+// @date           2009-11-25
 // @author         Eric Bogs
 // @namespace      http://bo.gs
 
@@ -12,7 +12,7 @@
 // @enabledbydefault false
 // @homepage http://userscripts.org/scripts/show/39432
 // @conflict showunreadmessagecountonfaviconwooley
-// @versionorlastupdate Nov 18 2009
+// @versionorlastupdate Nov 25 2009
 // ==/UserScript==
 
 // By default, Gmail email accounts get a red icon, and hosted (Google Apps For
@@ -40,7 +40,7 @@ function GmailFavIconUnreadCount(gmail) {
     if (!this.inboxSpan_) {
       var frame = top.document.getElementById('canvas_frame') 
       if (frame) {
-        this.inboxSpan_ = frame.contentWindow.document.getElementById(':r3').getElementsByTagName('a')[0];
+        this.inboxSpan_ = frame.contentWindow.document.getElementsByClassName('n0')[0];
       }
     }
     return this.inboxSpan_;
