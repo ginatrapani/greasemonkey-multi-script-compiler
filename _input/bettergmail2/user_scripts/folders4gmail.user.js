@@ -8,7 +8,7 @@
 
 // @author Arend v. Reinersdorff
 // @tab Sidebar
-// @versionorlastupdate 1.52 2009-07-09, Label update timeout set to 5s by G. Trapani
+// @versionorlastupdate 1.53 2010-03-04, Label update timeout set to 5s by G. Trapani
 
 // ==/UserScript==
 
@@ -99,37 +99,32 @@ if($("#f4g_style", canvasFrame).length){
     return;
 }
 (function addStyleTag(){
-    var labelsSide   = "left";
     var oppositeSide = "right";
     if(rlmChar){
-        labelsSide   = "right";
         oppositeSide = "left";
     }
     var styleHtml = "<style id='f4g_style'>"
-        +  "div.f4g_expander { position: relative; height: 15px; float: " + labelsSide + "; }"
-        + " div.f4g_expander { border: none; }" // fix terminal theme
-        + " div.f4g_expander div.f4g_exp1 { position: absolute; top: 5px; " + oppositeSide + ": 3px; width: 10px; height: 12px; }"
-        + " div.f4g_expander div.f4g_exp2 { position: absolute; top: 6px; " + oppositeSide + ": 2px; width: 12px; height: 10px; }"
-        + " div.f4g_expander img          { position: absolute; top: 6px; " + oppositeSide + ": 3px; cursor: pointer; }"
-        + " div.f4g_fake { margin-" + oppositeSide + " : 4px; overflow : hidden; white-space : nowrap; }" //replacement for .n2
-        + " div.f4g_fake a { cursor: default; text-decoration: none; font-style: italic; }"
+        +  "span.f4g_expander { display: inline-block; position: relative; height: 16px; width: 14px; vertical-align: bottom; }"
+        + " span.f4g_expander { border: none; }" // fix terminal theme
+        + " span.f4g_expander span.f4g_exp1 { position: absolute; top: 2px; " + oppositeSide + ": 3px; width: 10px; height: 12px; }"
+        + " span.f4g_expander span.f4g_exp2 { position: absolute; top: 3px; " + oppositeSide + ": 2px; width: 12px; height: 10px; }"
+        + " span.f4g_expander img          { position: absolute; top: 3px; " + oppositeSide + ": 3px; cursor: pointer; }"
+        + " div.f4g_fake a.n0 { cursor: default; text-decoration: none; font-style: italic; }"
         + " span.f4g_countWatch { display: none; }"
-        + " td.nL { vertical-align: bottom; }" //color chooser
         + "</style>";
     $("head", canvasFrame).append(styleHtml);
 })();
 
 
 (function waitForLoading(){
-    var $tbodyNodes = $("table.cf.nX tbody", canvasFrame);
-    if(($tbodyNodes.length >= 2) && $tbodyNodes.eq(1).find("a[title]").length){
-        $labelParent = $tbodyNodes.eq(1);
+    var $divNodes = $("div.Mdjed", canvasFrame);
+    if(($divNodes.length >= 2) && $divNodes.eq(1).find("a[title]").length){
+        $labelParent = $divNodes.eq(1);
         checkForLabelUpdates();
     }else{
         window.setTimeout(waitForLoading, 500);
     }
 })();
-
 
 function checkForLabelUpdates(){
     var $labelNodes = $labelParent.find("div.f4g_modified");
@@ -139,7 +134,7 @@ function checkForLabelUpdates(){
         $labelNodes.removeClass("f4g_isInDom");
     }
 
-    var newLabels = $labelParent.find("td > div.n2");
+    var newLabels = $labelParent.find("div.cPAfuf:not(.f4g_modified)");
     newLabels.each(addLabel);
 
     if(labelMap.size() > $labelParent.find("span.f4g_countWatch").length){
@@ -169,9 +164,17 @@ function applyToTopLabels(aFunction){
 
 
 function addLabel(){
-    var $labelNode = $(this).wrap("<div class='f4g_modified'></div>").parent();
+    var $labelNode = $(this);
+    $labelNode.addClass("f4g_modified");
+
     var label = new Label($labelNode);
     var existingLabel = labelMap.get(label.canonicalName);
+
+    //pull id down (if exist)
+    //so the id only affects the real label and not its fake parents
+    var idString = $labelNode.parent().attr("id");
+    $labelNode.attr("id", idString);
+    $labelNode.parent().removeAttr("id");
 
     if(existingLabel){
         label = existingLabel;
@@ -208,8 +211,8 @@ function addLabel(){
 }
 
 
-//fake labels are in the tr $nodes of normal labels
-//check if a fake label should go to another tr $node
+//fake labels are in the div.Alfa2e nodes of normal labels
+//check if a fake label should go to another div.Alfa2e node
 function checkFakeParentLocation(label){
     var parentLabel = label.parentLabel;
     if(!parentLabel){
@@ -261,7 +264,7 @@ function Label($labelNode){
         var fullName = $labelNode.find("a").eq(0).attr("title");
 
         //cut unread count
-        if($labelNode.find("div.n1").length){
+        if($labelNode.find("span.n1").length){
             var regexResult = fullName.match(unreadNameRegex);
             //there might be no unread count because of gmail labs 'hide unread counts' feature
             if(regexResult){
@@ -315,14 +318,12 @@ function standardSeparator(labelName){
 
 function createFakeLabel($labelNode, parentLabelName){
     var $fakeParent = $labelNode.clone();
-    $fakeParent.find("div.f4g_expander").remove();
-    $fakeParent = $fakeParent.children().eq(0);
-
+    $fakeParent.find("span.f4g_expander").remove();
     $fakeParent.find("span.f4g_countWatch").remove();
+    $fakeParent.children().eq(0).css("visibility", "hidden");
+
     //not bold
-    $fakeParent.removeClass("n1");
-    //don't interfere with unread count update
-    $fakeParent.removeClass("n2");
+    $fakeParent.find("span.n1").removeClass("n1");
 
     var $aNode = $fakeParent.find("a");
     //set right name
@@ -335,12 +336,12 @@ function createFakeLabel($labelNode, parentLabelName){
     $labelNode.before($fakeParent);
     $fakeParent.each(addLabel);
 
-    $fakeParent.parent().addClass("f4g_fake");
+    $fakeParent.addClass("f4g_fake");
 }
 
 
 function setExpanderDisplay(label){
-    var $expanderNode = label.$node.find("div.f4g_expander");
+    var $expanderNode = label.$node.find("span.f4g_expander");
     if(label.isExpanded){
         $expanderNode.removeClass("pr");
         $expanderNode.addClass   ("pv");
@@ -363,16 +364,12 @@ function setLabelDisplay(label){
         }
     }
 
-    //for the top label in the tr $node, change the whole tr $node
+    //for the top label in the $node, change the display of the whole $node
     var $labelNode = label.$node;
     if(!$labelNode.prev().length){
-        $labelNode.parent().parent().css("display", displayString);
+        $labelNode.parent().css("display", displayString);
     }
 
-    //for non-fake labels also hide the color chooser
-    if($labelNode.find("div.n2").length){
-        $labelNode = $labelNode.add($labelNode.parent().prev().children());
-    }
     $labelNode.css("display", displayString);
 
     for(var canonicalLabelName in label.childLabels.values){
@@ -382,13 +379,15 @@ function setLabelDisplay(label){
 
 
 function addExpanderAndIndent(label){
-    var indentionLevel  = label.canonicalName.split("/").length;
-    var expanderHtml = "<div class='f4g_expander r' style='width: " + indentionLevel*14 + "px;'>"
-        + "<div class='k f4g_exp1'></div>"
-        + "<div class='k f4g_exp2'></div>"
+    var indentionLevel  = label.canonicalName.split("/").length - 1;
+
+    //IE needs <span> instead of <div> for inline-block to work
+    var expanderHtml = "<span class='f4g_expander r' style='padding-left: " + indentionLevel*14 + "px;'>"
+        + "<span class='k f4g_exp1'></span>"
+        + "<span class='k f4g_exp2'></span>"
         + "<img class='pq' src='images/cleardot.gif'>"
-        + "</div>";
-    label.$node.prepend(expanderHtml);
+        + "</span>";
+    label.$node.children().eq(0).after(expanderHtml);
 
     (function(clickLabel){
         label.$node.find("img").click(function(){changeExpand(clickLabel)});
@@ -446,7 +445,7 @@ function checkUnreadCount(label){
     if(!$labelNode.find("span.f4g_countWatch").length){
         var $aNode = $labelNode.find("a");
         label.normalUnreadCount = 0;
-        if($labelNode.find("div.n1").length){
+        if($labelNode.find("span.n1").length){
             var fullname = $aNode.attr("title");
             var regexResult = fullname.match(unreadNameRegex);
             //there might be no unread count because of gmail labs 'hide unread counts' feature
@@ -534,8 +533,8 @@ this.lastIframeId = "";
                 appendStandardStyleTag(doc);
                 var styleRules = "div.k { background: #B5EDBC; }"
                     + " img.pq { width: 10px; height: 10px; }"
-                    + " div.pv img.pq { background: url(images/2/5/c/icons4.png) -70px -30px; }"
-                    + " div.pr img.pq { background: url(images/2/5/c/icons4.png) -60px -20px; }"
+                    + " div.pv img.pq { background: url(?ui=2&view=dim&iv=18spvsvrklakw&it=ic) -70px -30px; }"
+                    + " div.pr img.pq { background: url(?ui=2&view=dim&iv=18spvsvrklakw&it=ic) -60px -20px; }"
                     + " #nb_0 div.f4g_expander img.pq { display: block; }"; // Gmail super clean skin (ui=1) fix
                 appendStyleTag(doc, styleRules, "f4g_style2");
             }
