@@ -8,7 +8,7 @@
 
 // @author Arend v. Reinersdorff
 // @tab Sidebar
-// @versionorlastupdate 1.53 2010-03-04, Label update timeout set to 5s by G. Trapani
+// @versionorlastupdate v. 1.53 Mar 04 2010, Label update timeout set to 5s by G. Trapani
 
 // ==/UserScript==
 
