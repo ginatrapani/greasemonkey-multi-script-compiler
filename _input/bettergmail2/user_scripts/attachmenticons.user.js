@@ -8,7 +8,7 @@
 // @include       https://mail.google.com/*
 
 // @tab Messages
-// @enabledbydefault true
+// @enabledbydefault false
 // @versionorlastupdate Apr 15 2006
 // @conflict attachmenticonsnative
 // ==/UserScript==

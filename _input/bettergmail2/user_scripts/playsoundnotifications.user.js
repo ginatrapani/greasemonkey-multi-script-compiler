@@ -51,5 +51,3 @@ if(canvas_frame){
 	},500);	
 }
 
-<div>powered by <a href="http://sylvain.comte.online.fr/AirCarnet/?post/Smart-Google-Subscriber">Smart Google Subscriber</a>
-<a>
